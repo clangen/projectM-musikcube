@@ -20,16 +20,17 @@
     <SccProjectName />
     <SccLocalPath />
     <ProjectGuid>{68AA481E-3CCE-440F-8CCE-69F1B371C89D}</ProjectGuid>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v140</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <PlatformToolset>v140</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
@@ -65,7 +66,7 @@
       <Optimization>MaxSpeed</Optimization>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>.\;..\;..\libprojectM;..\WinLibs\SDL2-2.0.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\libprojectM;..\WinLibs\SDL2-2.0.5\include;..\..\..\musikcube\src\core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Release\projectMvis.pch</PrecompiledHeaderOutputFile>
@@ -90,7 +91,7 @@
     <Link>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Windows</SubSystem>
-      <OutputFile>.\Release\projectMvis.exe</OutputFile>
+      <OutputFile>.\Release\projectMvis.dll</OutputFile>
       <AdditionalLibraryDirectories>..\libprojectM\Release;..\WinLibs\SDL2-2.0.5\VisualC\Win32\Release;..\WinLibs\freetype-2.3.5\objs;..\WinLibs\FTGL\win32_vcpp\Build;..\WinLibs\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_MT.lib;freetype235.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -107,7 +108,7 @@
       <WarningLevel>Level3</WarningLevel>
       <MinimalRebuild>true</MinimalRebuild>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>.\;..\;..\libprojectM;..\WinLibs\SDL2-2.0.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\libprojectM;..\WinLibs\SDL2-2.0.5\include;..\..\..\musikcube\src\core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Debug\projectMvis.pch</PrecompiledHeaderOutputFile>
@@ -134,7 +135,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <OutputFile>.\Debug\projectMvis.exe</OutputFile>
+      <OutputFile>.\Debug\projectMvis.dll</OutputFile>
       <AdditionalLibraryDirectories>..\libprojectM\Debug;..\WinLibs\SDL2-2.0.5\VisualC\Win32\Debug;..\WinLibs\freetype-2.3.5\objs;..\WinLibs\FTGL\win32_vcpp\Build;..\WinLibs\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_MT_D.lib;freetype235_d.lib;glew32sd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
