@@ -24,161 +24,79 @@
 #include "sdltoprojectM.h"
 #include <SDL_opengl.h>
 
-#ifdef DEBUG
-FILE *debugFile = NULL;
-#endif
-
-projectM *globalPM = NULL;
-
-int dumpFrame = 0;
-int frameNumber = 0;
-GLubyte *fbuffer = NULL;
-SDL_Window *screen = NULL;
-
-extern void addPCM16(short [2][512]);
-
-void renderLoop( projectM *pm ) {
-
+void renderLoop(projectM *pm, SDL_Window* screen) {
     int i;
     int x, y;
     int index;
     short pcm_data[2][512];
 
-    while ( 1 ) {
+    while (true) {
         projectMEvent evt;
         projectMKeycode key;
         projectMModifier mod;
 
         /** Process SDL events */
         SDL_Event event;
-        while ( SDL_PollEvent( &event ) ) {
+        while (SDL_PollEvent(&event)) {
             /** Translate into projectM codes and process */
-            evt = sdl2pmEvent( event );
-            key = sdl2pmKeycode( event.key.keysym.sym );
-            mod = sdl2pmModifier( event.key.keysym.mod );
-            if ( evt == PROJECTM_KEYDOWN ) {
-                pm->key_handler( evt, key, mod );
-              }
-          }
+            evt = sdl2pmEvent(event);
+            key = sdl2pmKeycode(event.key.keysym.sym);
+            mod = sdl2pmModifier(event.key.keysym.mod);
 
-        /** Produce some fake PCM data to stuff into projectM */
-        for ( i = 0 ; i < 512 ; i++ ) {
-            if ( i % 2 == 0 ) {
-                pcm_data[0][i] = (float)( rand() / ( (float)RAND_MAX ) * (pow(2,14) ) );
-                pcm_data[1][i] = (float)( rand() / ( (float)RAND_MAX ) * (pow(2,14) ) );
-                } else {
-                pcm_data[0][i] = (float)( rand() / ( (float)RAND_MAX ) * (pow(2,14) ) );
-                pcm_data[1][i] = (float)( rand() / ( (float)RAND_MAX ) * (pow(2,14) ) );
-                }
-            if ( i % 2 == 1 ) {
-                pcm_data[0][i] = -pcm_data[0][i];
-                pcm_data[1][i] = -pcm_data[1][i];
-                }
+            if (evt == PROJECTM_KEYDOWN) {
+                pm->key_handler( evt, key, mod );
+            }
         }
 
-        /** Add the waveform data */
-        //addPCM16( pcm_data );
+        /** Produce some fake PCM data to stuff into projectM */
+        for (i = 0 ; i < 512 ; i++) {
+            if (i % 2 == 0) {
+                pcm_data[0][i] = (float) (rand() / ((float) RAND_MAX ) * (pow(2,14)));
+                pcm_data[1][i] = (float) (rand() / ((float) RAND_MAX ) * (pow(2,14)));
+            }
+            else {
+                pcm_data[0][i] = (float) (rand() / ((float )RAND_MAX ) * (pow(2,14)));
+                pcm_data[1][i] = (float) (rand() / ((float) RAND_MAX ) * (pow(2,14)));
+            }
 
-        /** Render the new frame */
+            if (i % 2 == 1) {
+                pcm_data[0][i] = -pcm_data[0][i];
+                pcm_data[1][i] = -pcm_data[1][i];
+            }
+        }
+
+        pm->pcm()->addPCM16(pcm_data);
         pm->renderFrame();
-
-        //if ( dumpFrame ) {
-        //    char fname[1024];
-	       // FILE *f;
-        //    sprintf( fname, "projectM_%08d.ppm", frameNumber++ );
-        //    f = fopen( fname, "wb" );
-        //    fprintf( f, "P3\n#\n%d %d\n255\n", pm->wvw, pm->wvh );
-        //    glReadPixels( 0, 0, pm->wvw, pm->wvh, GL_RGB, GL_UNSIGNED_BYTE, fbuffer );
-        //    index = 0;
-        //    for ( y = 0 ; y < pm->wvh ; y++ ) {
-        //        for ( x = 0 ; x < pm->wvw ; x++ ) {
-        //            fprintf( f, "%d %d %d ", fbuffer[index++], fbuffer[index++], fbuffer[index++] );
-        //          }
-        //        fprintf( f, "\n" );
-        //      }
-        //    fclose( f );
-        //  }
 
         SDL_GL_SwapWindow(screen);
       }
 
-  printf("Worker thread: Exiting\n");
-  }
+    printf("Worker thread: Exiting\n");
+}
 
 
-int main( int argc, char *argv[] ) {
-
-    /** Variables */
+int main(int argc, char *argv[]) {
+    projectM *pm = NULL;
+    SDL_Window *screen = NULL;
     int fullscreen = 0;
-    int width = 784,
-        height = 784;
+    int width = 784;
+    int height = 784;
+    int flags = 0;
 
-#ifdef DEBUG
-	int value;
-	int rgb_size[3];
-#endif
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        return PROJECTM_ERROR;
+    }
 
-  //const SDL_VideoInfo* info = NULL;
-  int bpp = 0;
-  /* Flags we will pass into SDL_SetVideoMode. */
-  int flags = 0;
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-#ifdef DEBUG
-#ifdef WIN32
-    /** Init debug */
-    debugFile = fopen( "z:\\src\\projectMvis.txt", "wb" );
-#else
-    debugFile = fopen( "/tmp/projectMvis.txt", "wb" );
-#endif /** WIN32 */
-#endif /** DEBUG */
-
-    /** Allocate the SDL windows */
-  /* Information about the current video settings. */
-  /* First, initialize SDL's video subsystem. */
-  if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
-    /* Failed, exit. */
-#ifdef DEBUG
-    fprintf( debugFile, "Video initialization failed: %s\n",
-             SDL_GetError( ) );
-#endif
-    //projectM_vtable.disable_plugin (&projectM_vtable);
-    return PROJECTM_ERROR;
-
-  }
-
-  /* Let's get some video information. */
-//  info = SDL_GetVideoInfo( );
-//  if( !info ) {
-//    /* This should probably never happen. */
-//#ifdef DEBUG
-//    fprintf( debugFile, "Video query failed: %s\n",
-//             SDL_GetError( ) );
-//#endif
-//    //    projectM_vtable.disable_plugin (&projectM_vtable);
-//    return PROJECTM_ERROR;
-//  }
-//
-//  bpp = info->vfmt->BitsPerPixel;
-
-//  SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5 );
-//  SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5 );
-//  SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5 );
-
-  //SDL_GL_SetAttribute( SDL_GL_ACCUM_RED_SIZE, 8 );
-  // SDL_GL_SetAttribute( SDL_GL_ACCUM_GREEN_SIZE, 8 );
-  //  SDL_GL_SetAttribute( SDL_GL_ACCUM_BLUE_SIZE, 8 );
-   SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, 8 );
-  SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
-  SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-
-  if (fullscreen==0)
-     flags = SDL_WINDOW_OPENGL;
-  else flags = SDL_WINDOW_OPENGL |SDL_WINDOW_FULLSCREEN;
-
-    //  w = 512; h = 512; bpp = 16;
-#ifdef DEBUG
-fprintf( debugFile, "pre SDL_SetVideoMode()\n" );
-#endif
+    if (fullscreen == 0) {
+        flags = SDL_WINDOW_OPENGL;
+    }
+    else {
+        flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
+    }
 
     screen =
         SDL_CreateWindow(
@@ -191,108 +109,14 @@ fprintf( debugFile, "pre SDL_SetVideoMode()\n" );
 
     SDL_GL_CreateContext(screen);
 
-    #ifdef DEBUG
-    fprintf( debugFile, "post SDL_SetVideoMode()\n" );
-    #endif
+    if (screen == NULL) {
+        return PROJECTM_ERROR;
+    }
 
-  if(screen == NULL ) {
-    /*
-     * This could happen for a variety of reasons,
-     * including DISPLAY not being set, the specified
-     * resolution not being available, etc.
-     */
-#ifdef DEBUG
-   fprintf( debugFile, "Video mode set failed: %s\n",
-	     SDL_GetError( ) );
-#endif
+    pm = new projectM("z:\\src\\projectM.inp");
+    pm->projectM_resetGL( width, height );
 
-   // projectM_vtable.disable_plugin (&projectM_vtable);
-    return PROJECTM_ERROR;
-  }
-
-#ifdef DEBUG
-	//fprintf(debugFile, "Screen BPP: %d\n", SDL_GetVideoSurface()->format->BitsPerPixel);
-	//fprintf(debugFile, "\n");
-	fprintf( debugFile, "Vendor     : %s\n", glGetString( GL_VENDOR ) );
-	fprintf( debugFile, "Renderer   : %s\n", glGetString( GL_RENDERER ) );
-	fprintf( debugFile, "Version    : %s\n", glGetString( GL_VERSION ) );
-	fprintf( debugFile, "Extensions : %s\n", glGetString( GL_EXTENSIONS ) );
-	fprintf(debugFile, "\n");
-
-	rgb_size[0] = 8;
-	rgb_size[1] = 8;
-	rgb_size[2] = 8;
-	SDL_GL_GetAttribute( SDL_GL_RED_SIZE, &value );
-	fprintf( debugFile, "SDL_GL_RED_SIZE: requested %d, got %d\n", rgb_size[0],value);
-	SDL_GL_GetAttribute( SDL_GL_GREEN_SIZE, &value );
-	fprintf( debugFile, "SDL_GL_GREEN_SIZE: requested %d, got %d\n", rgb_size[1],value);
-	SDL_GL_GetAttribute( SDL_GL_BLUE_SIZE, &value );
-	fprintf( debugFile, "SDL_GL_BLUE_SIZE: requested %d, got %d\n", rgb_size[2],value);
-	SDL_GL_GetAttribute( SDL_GL_DEPTH_SIZE, &value );
-	fprintf( debugFile, "SDL_GL_DEPTH_SIZE: requested %d, got %d\n", bpp, value );
-	SDL_GL_GetAttribute( SDL_GL_DOUBLEBUFFER, &value );
-	fprintf( debugFile, "SDL_GL_DOUBLEBUFFER: requested 1, got %d\n", value );
-#ifdef PANTS
-	if ( fsaa ) {
-		SDL_GL_GetAttribute( SDL_GL_MULTISAMPLEBUFFERS, &value );
-		printf( "SDL_GL_MULTISAMPLEBUFFERS: requested 1, got %d\n", value );
-		SDL_GL_GetAttribute( SDL_GL_MULTISAMPLESAMPLES, &value );
-		printf( "SDL_GL_MULTISAMPLESAMPLES: requested %d, got %d\n", fsaa, value );
-	}
-#endif
-#endif
-
-    /** Setup some window stuff */
-    //SDL_WM_SetCaption( PROJECTM_TITLE, NULL );
-
-    char const* ext = (char const*)glGetString(GL_EXTENSIONS);
-
-    /** Initialise projectM */
-    globalPM = new projectM("z:\\src\\projectM.inp");
-
-    //globalPM->fullscreen = 0;
-//    globalPM->renderTarget->texsize = 1024;
-//	globalPM->renderTarget->context1 = (void *)aglGetCurrentContext();
-#ifdef DEBUG22
-    if ( debugFile != NULL ) {
-        fprintf( debugFile, "current context: %X\n",
-                 globalPM->renderTarget->context1 );
-        fflush( debugFile );
-      }
-#endif
-
-#ifdef MACOS
-    globalPM->fontURL = (char *)malloc( sizeof( char ) * 512 );
-    strcpy( globalPM->fontURL, "../../fonts" );
-
-    globalPM->presetURL = (char *)malloc( sizeof( char ) * 512 );
-    strcpy( globalPM->presetURL, "../../presets" );
-#endif
-#ifdef WIN32
-    //globalPM->fontURL = (char *)malloc( sizeof( char ) * 512 );
-    //strcpy( globalPM->fontURL, "c:\\tmp\\projectM\\fonts" );
-
-    //globalPM->presetURL = (char *)malloc( sizeof( char ) * 512 );
-    //strcpy( globalPM->presetURL, "c:\\tmp\\projectM\\presets_test" );
-#endif
-#ifdef LINUX
-  globalPM->fontURL = (char *)malloc( sizeof( char ) * 512 );
-    strcpy( globalPM->fontURL, "/etc/projectM/fonts" );
-
-    globalPM->presetURL = (char *)malloc( sizeof( char ) * 512 );
-    strcpy( globalPM->presetURL, "/etc/projectM/presets" );
-#endif
-    //globalPM->projectM_init();
-
-    globalPM->projectM_resetGL( width, height );
-
-    /** Allocate the buffer for frame dumping, if applicable */
-    //if ( dumpFrame ) {
-    //    fbuffer = (GLubyte *)malloc( sizeof( GLubyte ) * globalPM->wvw * globalPM->wvh * 3 );
-    //  }
-
-    /** Initialise the thread */
-    renderLoop( globalPM );
+    renderLoop(pm, screen);
 
     return PROJECTM_SUCCESS;
-  }
+}

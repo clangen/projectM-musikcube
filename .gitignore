@@ -1,4 +1,7 @@
-**/.vc
+**/.vs
+**/.vscode
+**/*.VC.db
+**/*.VC.opendb
 src/libprojectM/Debug
 src/libprojectM/Release
 src/libprojectM/libprojectM.VC.db
