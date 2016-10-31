@@ -69,7 +69,7 @@ void renderLoop(projectM *pm, SDL_Window* screen) {
         pm->renderFrame();
 
         SDL_GL_SwapWindow(screen);
-      }
+    }
 
     printf("Worker thread: Exiting\n");
 }
