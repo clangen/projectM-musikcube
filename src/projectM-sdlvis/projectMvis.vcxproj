@@ -65,7 +65,7 @@
       <Optimization>MaxSpeed</Optimization>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>..;c:\sdl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\libprojectM;..\WinLibs\SDL2-2.0.5\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Release\projectMvis.pch</PrecompiledHeaderOutputFile>
@@ -91,9 +91,12 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <SubSystem>Windows</SubSystem>
       <OutputFile>.\Release\projectMvis.exe</OutputFile>
-      <AdditionalLibraryDirectories>..\projectM\Release;C:\SDL\VisualC\SDL\Debug;C:\SDL\VisualC\SDLmain\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;projectM.lib;sdl.lib;sdlmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libprojectM\Release;..\WinLibs\SDL2-2.0.5\VisualC\Win32\Release;..\WinLibs\freetype-2.3.5\objs;..\WinLibs\FTGL\win32_vcpp\Build;..\WinLibs\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_MT.lib;freetype235.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)..\WinLibs\SDL2-2.0.5\VisualC\Win32\Release\*.dll $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -135,6 +138,9 @@
       <AdditionalLibraryDirectories>..\libprojectM\Debug;..\WinLibs\SDL2-2.0.5\VisualC\Win32\Debug;..\WinLibs\freetype-2.3.5\objs;..\WinLibs\FTGL\win32_vcpp\Build;..\WinLibs\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_MT_D.lib;freetype235_d.lib;glew32sd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)..\WinLibs\SDL2-2.0.5\VisualC\Win32\Debug\*.dll $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
