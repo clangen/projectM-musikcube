@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{31B91091-431A-4842-8682-2A04B51C980A}</ProjectGuid>
+    <RootNamespace>libprojectM</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\Debug\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.\;.\Renderer;..\WinLibs\freetype-2.3.5\include;..\WinLibs\FTGL\include;..\WinLibs\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;DEBUG;GLEW_STATIC;USE_FBO;USE_FTGL;DISABLE_NATIVE_PRESETS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeaderOutputFile>.\Debug/libprojectM.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <BrowseInformation>true</BrowseInformation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\Debug\libprojectM.lib</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug/libprojectM.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>.\;.\Renderer;..\WinLibs\freetype-2.3.5\include;..\WinLibs\FTGL\include;..\WinLibs\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;GLEW_STATIC;USE_FBO;USE_FTGL;DISABLE_NATIVE_PRESETS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeaderOutputFile>.\Release/libprojectM.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
+      <ObjectFileName>.\Release/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <ShowIncludes>true</ShowIncludes>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0809</Culture>
+    </ResourceCompile>
+    <Lib>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>.\Release\libprojectM.lib</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release/libprojectM.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WinLibs\FTGL\win32_vcpp\ftgl_static_lib\ftgl_static_lib.vcxproj">
+      <Project>{4a80dc08-8d4e-4136-b818-af0024000a21}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\WinLibs\glew\build\vc6\glew_static.vcxproj">
+      <Project>{94ac71aa-7528-4e56-a5a9-eddfe6d20a39}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="carbontoprojectM.h" />
+    <ClInclude Include="Common.hpp" />
+    <ClInclude Include="ConfigFile.h" />
+    <ClInclude Include="dlldefs.h" />
+    <ClInclude Include="event.h" />
+    <ClInclude Include="fatal.h" />
+    <ClInclude Include="fftsg.h" />
+    <ClInclude Include="glError.h" />
+    <ClInclude Include="glew.h" />
+    <ClInclude Include="glxew.h" />
+    <ClInclude Include="HungarianMethod.hpp" />
+    <ClInclude Include="IdleTextures.hpp" />
+    <ClInclude Include="KeyHandler.hpp" />
+    <ClInclude Include="lvtoprojectM.h" />
+    <ClInclude Include="MilkdropPresetFactory\BuiltinFuncs.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\BuiltinParams.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\CustomShape.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\CustomWave.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\CValue.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\Eval.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\Expr.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\Func.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\IdlePreset.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\InitCond.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\InitCondUtils.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\MilkdropPreset.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\MilkdropPresetFactory.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\Param.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\ParamUtils.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\Parser.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\PerFrameEqn.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\PerPixelEqn.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\PerPointEqn.hpp" />
+    <ClInclude Include="MilkdropPresetFactory\PresetFrameIO.hpp" />
+    <ClInclude Include="NativePresetFactory\MilkdropCompatability.hpp" />
+    <ClInclude Include="NativePresetFactory\NativePreset.hpp" />
+    <ClInclude Include="NativePresetFactory\NativePresetFactory.hpp" />
+    <ClInclude Include="omptl\omptl_algorithm_par.h" />
+    <ClInclude Include="omptl\omptl_algorithm_ser.h" />
+    <ClInclude Include="omptl\omptl_numeric_extentions.h" />
+    <ClInclude Include="omptl\omptl_numeric_extentions_par.h" />
+    <ClInclude Include="omptl\omptl_numeric_extentions_ser.h" />
+    <ClInclude Include="omptl\omptl_numeric_par.h" />
+    <ClInclude Include="omptl\omptl_numeric_ser.h" />
+    <ClInclude Include="omptl\omptl_tools.h" />
+    <ClInclude Include="PCM.hpp" />
+    <ClInclude Include="PipelineMerger.hpp" />
+    <ClInclude Include="Preset.hpp" />
+    <ClInclude Include="PresetChooser.hpp" />
+    <ClInclude Include="PresetFactory.hpp" />
+    <ClInclude Include="PresetFactoryManager.hpp" />
+    <ClInclude Include="PresetLoader.hpp" />
+    <ClInclude Include="projectM.hpp" />
+    <ClInclude Include="RandomNumberGenerators.hpp" />
+    <ClInclude Include="Renderer\BeatDetect.hpp" />
+    <ClInclude Include="Renderer\FBO.hpp" />
+    <ClInclude Include="Renderer\Filters.hpp" />
+    <ClInclude Include="Renderer\MilkdropWaveform.hpp" />
+    <ClInclude Include="Renderer\PerlinNoise.hpp" />
+    <ClInclude Include="Renderer\PerPixelMesh.hpp" />
+    <ClInclude Include="Renderer\Pipeline.hpp" />
+    <ClInclude Include="Renderer\PipelineContext.hpp" />
+    <ClInclude Include="Renderer\Renderable.hpp" />
+    <ClInclude Include="Renderer\Renderer.hpp" />
+    <ClInclude Include="Renderer\RenderItemDistanceMetric.hpp" />
+    <ClInclude Include="Renderer\RenderItemMatcher.hpp" />
+    <ClInclude Include="Renderer\RenderItemMergeFunction.hpp" />
+    <ClInclude Include="Renderer\Shader.hpp" />
+    <ClInclude Include="Renderer\ShaderEngine.hpp" />
+    <ClInclude Include="Renderer\SOIL\image_DXT.h" />
+    <ClInclude Include="Renderer\SOIL\image_helper.h" />
+    <ClInclude Include="Renderer\SOIL\SOIL.h" />
+    <ClInclude Include="Renderer\SOIL\stbi_DDS_aug.h" />
+    <ClInclude Include="Renderer\SOIL\stbi_DDS_aug_c.h" />
+    <ClInclude Include="Renderer\SOIL\stb_image_aug.h" />
+    <ClInclude Include="Renderer\TextureManager.hpp" />
+    <ClInclude Include="Renderer\Transformation.hpp" />
+    <ClInclude Include="Renderer\UserTexture.hpp" />
+    <ClInclude Include="Renderer\VideoEcho.hpp" />
+    <ClInclude Include="Renderer\Waveform.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="sdltoprojectM.h" />
+    <ClInclude Include="TimeKeeper.hpp" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="win32-dirent.h" />
+    <ClInclude Include="wipemalloc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ConfigFile.cpp" />
+    <ClCompile Include="fftsg.cpp" />
+    <ClCompile Include="KeyHandler.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\BuiltinFuncs.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\BuiltinParams.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\CustomShape.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\CustomWave.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\Eval.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\Expr.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\Func.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\IdlePreset.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\InitCond.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\MilkdropPreset.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\MilkdropPresetFactory.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\Param.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\Parser.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\PerFrameEqn.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\PerPixelEqn.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\PerPointEqn.cpp" />
+    <ClCompile Include="MilkdropPresetFactory\PresetFrameIO.cpp" />
+    <ClCompile Include="PCM.cpp" />
+    <ClCompile Include="PipelineMerger.cpp" />
+    <ClCompile Include="Preset.cpp" />
+    <ClCompile Include="PresetChooser.cpp" />
+    <ClCompile Include="PresetFactory.cpp" />
+    <ClCompile Include="PresetFactoryManager.cpp" />
+    <ClCompile Include="PresetLoader.cpp" />
+    <ClCompile Include="projectM.cpp" />
+    <ClCompile Include="Renderer\BeatDetect.cpp" />
+    <ClCompile Include="Renderer\FBO.cpp" />
+    <ClCompile Include="Renderer\Filters.cpp" />
+    <ClCompile Include="Renderer\MilkdropWaveform.cpp" />
+    <ClCompile Include="Renderer\PerlinNoise.cpp" />
+    <ClCompile Include="Renderer\PerPixelMesh.cpp" />
+    <ClCompile Include="Renderer\Pipeline.cpp" />
+    <ClCompile Include="Renderer\PipelineContext.cpp" />
+    <ClCompile Include="Renderer\Renderable.cpp" />
+    <ClCompile Include="Renderer\Renderer.cpp" />
+    <ClCompile Include="Renderer\RenderItemDistanceMetric.cpp" />
+    <ClCompile Include="Renderer\RenderItemMatcher.cpp" />
+    <ClCompile Include="Renderer\Shader.cpp" />
+    <ClCompile Include="Renderer\ShaderEngine.cpp" />
+    <ClCompile Include="Renderer\SOIL\image_DXT.c" />
+    <ClCompile Include="Renderer\SOIL\image_helper.c" />
+    <ClCompile Include="Renderer\SOIL\SOIL.c" />
+    <ClCompile Include="Renderer\SOIL\stb_image_aug.c" />
+    <ClCompile Include="Renderer\TextureManager.cpp" />
+    <ClCompile Include="Renderer\UserTexture.cpp" />
+    <ClCompile Include="Renderer\VideoEcho.cpp" />
+    <ClCompile Include="Renderer\Waveform.cpp" />
+    <ClCompile Include="TimeKeeper.cpp" />
+    <ClCompile Include="timer.cpp" />
+    <ClCompile Include="win32-dirent.cpp" />
+    <ClCompile Include="wipemalloc.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
