@@ -66,6 +66,20 @@ pthread_mutex_t preset_mutex;
 #endif
 #endif
 
+static std::string dataDirectory;
+
+inline void SetProjectMDataDirectory(const std::string& directory) {
+    dataDirectory = directory;
+}
+
+inline std::string GetProjectMDataDirectory() {
+    if (dataDirectory.size()) {
+        return dataDirectory + "\\projectM";
+    }
+
+    return std::string(CMAKE_INSTALL_PREFIX) + std::string("/share/projectM");
+}
+
 projectM::~projectM()
 {
 
@@ -168,6 +182,8 @@ void projectM::readConfig (const std::string & configFile )
 {
     std::cout << "[projectM] config file: " << configFile << std::endl;
 
+    std::string datadir = GetProjectMDataDirectory();
+
     ConfigFile config ( configFile );
     _settings.meshX = config.read<int> ( "Mesh X", 32 );
     _settings.meshY = config.read<int> ( "Mesh Y", 24 );
@@ -180,7 +196,7 @@ void projectM::readConfig (const std::string & configFile )
     _settings.presetDuration = config.read<int> ( "Preset Duration", 15 );
 
     #ifdef LINUX
-    _settings.presetURL = config.read<string> ( "Preset Path", CMAKE_INSTALL_PREFIX "/share/projectM/presets" );
+    _settings.presetURL = config.read<string> ( "Preset Path", datadir + "/presets" );
     #endif
 
     #ifdef __APPLE__
@@ -189,7 +205,7 @@ void projectM::readConfig (const std::string & configFile )
     #endif
 
     #ifdef WIN32
-    _settings.presetURL = config.read<string> ( "Preset Path", CMAKE_INSTALL_PREFIX "/share/projectM/presets" );
+    _settings.presetURL = config.read<string> ( "Preset Path", datadir + "/presets" );
     #endif
 
     #ifdef __APPLE__
@@ -207,12 +223,9 @@ void projectM::readConfig (const std::string & configFile )
     #endif
 
     #ifdef WIN32
-    _settings.titleFontURL = config.read<string>
-    ( "Title Font", projectM_FONT_TITLE );
-    _settings.menuFontURL = config.read<string>
-    ( "Menu Font", projectM_FONT_MENU );
+    _settings.titleFontURL = config.read<string>("Title Font", datadir + "/fonts/Vera.ttf");
+    _settings.menuFontURL = config.read<string>("Menu Font", datadir + "/fonts/VeraMono.ttf");
     #endif
-
 
     _settings.shuffleEnabled = config.read<bool> ( "Shuffle Enabled", true);
 

@@ -93,7 +93,7 @@
       <SubSystem>Windows</SubSystem>
       <OutputFile>.\Release\projectMvis.dll</OutputFile>
       <AdditionalLibraryDirectories>..\libprojectM\Release;..\WinLibs\SDL2-2.0.5\VisualC\Win32\Release;..\WinLibs\freetype-2.3.5\objs;..\WinLibs\FTGL\win32_vcpp\Build;..\WinLibs\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_MT.lib;freetype235.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_MT.lib;freetype235.lib;glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy $(ProjectDir)..\WinLibs\SDL2-2.0.5\VisualC\Win32\Release\*.dll $(OutDir)</Command>
@@ -137,7 +137,7 @@
       <SubSystem>Windows</SubSystem>
       <OutputFile>.\Debug\projectMvis.dll</OutputFile>
       <AdditionalLibraryDirectories>..\libprojectM\Debug;..\WinLibs\SDL2-2.0.5\VisualC\Win32\Debug;..\WinLibs\freetype-2.3.5\objs;..\WinLibs\FTGL\win32_vcpp\Build;..\WinLibs\glew\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_MT_D.lib;freetype235_d.lib;glew32sd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_MT_D.lib;freetype235_d.lib;glew32sd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy $(ProjectDir)..\WinLibs\SDL2-2.0.5\VisualC\Win32\Debug\*.dll $(OutDir)</Command>

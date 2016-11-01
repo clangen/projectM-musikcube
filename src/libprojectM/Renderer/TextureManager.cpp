@@ -212,7 +212,7 @@ unsigned int TextureManager::getTextureMemorySize()
 
 void TextureManager::loadTextureDir()
 {
-	std::string dirname = CMAKE_INSTALL_PREFIX "/share/projectM/textures";
+	std::string dirname = GetProjectMDataDirectory() + "/textures";
 
 	  DIR * m_dir;
 

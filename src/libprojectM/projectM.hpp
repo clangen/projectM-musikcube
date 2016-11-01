@@ -102,8 +102,9 @@ typedef enum {
   } interface_t;
 
 #define CMAKE_INSTALL_PREFIX "z://projectM//"
-#define projectM_FONT_TITLE CMAKE_INSTALL_PREFIX "/share/projectM/fonts/Vera.ttf"
-#define projectM_FONT_MENU CMAKE_INSTALL_PREFIX "/share/projectM/fonts/VeraMono.ttf"
+
+DLLEXPORT void SetProjectMDataDirectory(const std::string& directory);
+DLLEXPORT std::string GetProjectMDataDirectory();
 
 /// A functor class that allows users of this library to specify random preset behavior
 class RandomizerFunctor {

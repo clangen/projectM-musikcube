@@ -342,7 +342,7 @@ void ShaderEngine::checkForCgError(const char *situation)
 void ShaderEngine::SetupCg()
 {
 	std::string line;
-	std::ifstream myfile(CMAKE_INSTALL_PREFIX "/share/projectM/shaders/projectM.cg");
+	std::ifstream myfile(GetProjectMDataDirectory() + "/shaders/projectM.cg");
 	if (myfile.is_open())
 	{
 		while (!myfile.eof())
@@ -354,9 +354,9 @@ void ShaderEngine::SetupCg()
 	}
 
 	else
-		std::cout << "Unable to load shader template \"" << CMAKE_INSTALL_PREFIX "/share/projectM/shaders/projectM.cg\"" << std::endl;
+		std::cout << "Unable to load shader template \"" << GetProjectMDataDirectory() + "/shaders/projectM.cg\"" << std::endl;
 
-	std::ifstream myfile2(CMAKE_INSTALL_PREFIX "/share/projectM/shaders/blur.cg");
+	std::ifstream myfile2(GetProjectMDataDirectory() + "/shaders/blur.cg");
 	if (myfile2.is_open())
 	{
 		while (!myfile2.eof())
@@ -376,7 +376,7 @@ void ShaderEngine::SetupCg()
 	cgSetParameterSettingMode(myCgContext, CG_DEFERRED_PARAMETER_SETTING);
 
 	myCgProfile = cgGLGetLatestProfile(CG_GL_FRAGMENT);
-	
+
 	// HACK breaks with buggy ati video drivers such as my own
 	// -carmelo.piccione@gmail.com 7/26/2010
 	//cgGLSetOptimalOptions(myCgProfile);

@@ -30,11 +30,27 @@
 
 #include "sdltoprojectM.h"
 
+#ifdef WIN32
+#include <shlwapi.h>
+#endif
+
 static projectM* pm = nullptr;
 static SDL_Window* screen = nullptr;
 static std::atomic<bool> initialized = false;
 static std::atomic<bool> quit = false;
 static HANDLE thread = nullptr;
+
+#ifdef WIN32
+static void setupDataDirectory(HMODULE module) {
+    char path[2048];
+    int length = GetModuleFileName(module, path, 2048);
+    if (length > 0 && length <= 2048) {
+        if (PathRemoveFileSpec(path)) {
+            SetProjectMDataDirectory(std::string(path));
+        }
+    }
+}
+#endif
 
 static void threadProc(void* unused) {
     int fullscreen = 0;
@@ -110,9 +126,14 @@ static void threadProc(void* unused) {
     printf("Worker thread: Exiting\n");
 }
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
+#ifdef WIN32
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
+    if (reason == DLL_PROCESS_ATTACH) {
+        setupDataDirectory(hModule);
+    }
     return true;
 }
+#endif
 
 class Plugin : public musik::core::IPlugin {
 public:
