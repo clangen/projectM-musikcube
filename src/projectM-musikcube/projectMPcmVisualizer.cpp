@@ -21,18 +21,25 @@
 
 #include <math.h>
 #include <SDL_opengl.h>
+
 #include <atomic>
+#include <chrono>
 
 #include <projectM.hpp>
 
 #include <sdk/IPcmVisualizer.h>
 #include <sdk/IPlugin.h>
 
-#include "sdltoprojectM.h"
+#include "EventMapper.h"
 
 #ifdef WIN32
 #include <shlwapi.h>
 #endif
+
+#define MAX_FPS 30LL
+#define MILLIS_PER_FRAME (1000LL / MAX_FPS)
+
+using namespace std::chrono;
 
 static projectM* pm = nullptr;
 static SDL_Window* screen = nullptr;
@@ -92,12 +99,15 @@ static void threadProc(void* unused) {
     pm = new projectM(configFn);
     pm->projectM_resetGL(width, height);
 
-    while (!quit) {
-        projectMEvent evt;
-        projectMKeycode key;
-        projectMModifier mod;
+    projectMEvent evt;
+    projectMKeycode key;
+    projectMModifier mod;
+    SDL_Event event;
+    long long start, end;
 
-        SDL_Event event;
+    while (!quit) {
+        auto start = system_clock::now();
+
         while (SDL_PollEvent(&event)) {
             evt = sdl2pmEvent(event);
             key = sdl2pmKeycode(event.key.keysym.sym);
@@ -115,6 +125,13 @@ static void threadProc(void* unused) {
 
         pm->renderFrame();
         SDL_GL_SwapWindow(screen);
+
+        auto end = system_clock::now();
+        auto delta = duration_cast<milliseconds>(end - start);
+        long long waitTime = MILLIS_PER_FRAME - (delta.count());
+        if (waitTime > 0) {
+            Sleep(waitTime);
+        }
     }
 
     delete pm;
@@ -147,6 +164,7 @@ public:
 class Visualizer : public musik::core::audio::IPcmVisualizer {
     public:
         virtual void Destroy() {
+            this->Hide();
             delete this;
         }
 

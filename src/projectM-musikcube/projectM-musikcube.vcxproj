@@ -11,10 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="projectMvis.cc" />
+    <ClCompile Include="projectMPcmVisualizer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sdltoprojectM.h" />
+    <ClInclude Include="EventMapper.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <SccProjectName />
