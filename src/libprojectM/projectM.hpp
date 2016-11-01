@@ -309,10 +309,10 @@ private:
   PresetChooser * m_presetChooser;
 
   /// Currently loaded preset
-  std::auto_ptr<Preset> m_activePreset;
+  std::shared_ptr<Preset> m_activePreset;
 
   /// Destination preset when smooth preset switching
-  std::auto_ptr<Preset> m_activePreset2;
+  std::shared_ptr<Preset> m_activePreset2;
 
   TimeKeeper *timeKeeper;
 
@@ -325,7 +325,7 @@ private:
 
   Pipeline* currentPipe;
 
-void switchPreset(std::auto_ptr<Preset> & targetPreset);
+void switchPreset(std::shared_ptr<Preset> & targetPreset);
 
 
 };

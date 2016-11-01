@@ -72,7 +72,7 @@ public:
   /// \param MilkdropPresetOutputs initialized and filled with data parsed from a MilkdropPreset
   MilkdropPreset(std::istream & in, const std::string & milkdropPresetName, PresetOutputs & presetOutputs);
 
-  ~MilkdropPreset();
+  virtual ~MilkdropPreset();
 
   /// All "builtin" parameters for this MilkdropPreset. Anything *but* user defined parameters and
   /// custom waves / shapes objects go here.
@@ -134,13 +134,13 @@ public:
   std::map<std::string,Param*> user_param_tree; /* user parameter splay tree */
 
 
-  PresetOutputs & pipeline() { return _presetOutputs; } 
+  PresetOutputs & pipeline() { return _presetOutputs; }
 
   void Render(const BeatDetect &music, const PipelineContext &context);
   const std::string & name() const;
-  const std::string & filename() const { return _filename; } 
+  const std::string & filename() const { return _filename; }
 private:
-  std::string _filename; 
+  std::string _filename;
   PresetInputs _presetInputs;
   /// Evaluates the MilkdropPreset for a frame given the current values of MilkdropPreset inputs / outputs
   /// All calculated values are stored in the associated MilkdropPreset outputs instance
@@ -173,7 +173,7 @@ private:
 
   void preloadInitialize();
   void postloadInitialize();
-  
+
   PresetOutputs & _presetOutputs;
 
 template <class CustomObject>

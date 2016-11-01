@@ -161,12 +161,22 @@ static void threadProc(void* unused) {
 }
 
 #ifdef WIN32
+#if true
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
     if (reason == DLL_PROCESS_ATTACH) {
         setupDataDirectory(hModule);
     }
     return true;
 }
+#else
+int main(int argc, char *argv[]) {
+    setupDataDirectory(NULL);
+    quit = false;
+    thread = (HANDLE)_beginthread(threadProc, 0, 0);
+    WaitForSingleObject(thread, INFINITE);
+    return 0;
+}
+#endif
 #endif
 
 class Plugin : public musik::core::IPlugin {

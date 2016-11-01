@@ -197,13 +197,13 @@ return out.str();
 
 }
 
-std::auto_ptr<Preset> IdlePresets::allocate(const std::string & name, PresetOutputs & presetOutputs)
+std::shared_ptr<Preset> IdlePresets::allocate(const std::string & name, PresetOutputs & presetOutputs)
 {
 
   if (name == IDLE_PRESET_NAME) {
   	std::istringstream in(presetText());
-  	return std::auto_ptr<Preset>(new MilkdropPreset(in, IDLE_PRESET_NAME, presetOutputs));
+  	return std::shared_ptr<Preset>(new MilkdropPreset(in, IDLE_PRESET_NAME, presetOutputs));
   }
   else
-	return std::auto_ptr<Preset>(0);
+	return std::shared_ptr<Preset>(0);
 }
