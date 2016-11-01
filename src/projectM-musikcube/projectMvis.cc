@@ -88,7 +88,8 @@ static void threadProc(void* unused) {
         return;
     }
 
-    pm = new projectM("z:\\src\\projectM.inp");
+    std::string configFn = GetProjectMDataDirectory() + "\\projectM.inp";
+    pm = new projectM(configFn);
     pm->projectM_resetGL(width, height);
 
     while (!quit) {

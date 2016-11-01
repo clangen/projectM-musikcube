@@ -96,8 +96,14 @@
       <AdditionalDependencies>msvcrt.lib;version.lib;winmm.lib;Imm32.lib;shlwapi.lib;opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_lib.lib;freetype.lib;glew_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy $(TargetPath) $(SolutionDir)..\musikcube\bin\release\plugins\ /Y
+if not exist "$(SolutionDir)..\musikcube\bin\release\plugins\projectM" mkdir "$(SolutionDir)..\musikcube\bin\release\plugins\projectM"
+if not exist "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\presets\" mkdir "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\presets\"
+if not exist "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\fonts\" mkdir "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\fonts\"
+if not exist "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\shaders\" mkdir "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\shaders\"
+xcopy $(SolutionDir)presets_milkdrop\* $(SolutionDir)..\musikcube\bin\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)fonts\*.ttf $(SolutionDir)..\musikcube\bin\release\plugins\projectM\fonts\ /Y
+xcopy $(SolutionDir)src\libprojectM\Renderer\*.cg $(SolutionDir)..\musikcube\bin\release\plugins\projectM\shaders\ /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -143,7 +149,14 @@
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(ProjectDir)..\WinLibs\SDL2-2.0.5\VisualC\Win32\Debug\*.dll $(OutDir)</Command>
+      <Command>xcopy $(TargetPath) $(SolutionDir)..\musikcube\bin\debug\plugins\ /Y
+if not exist "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM" mkdir "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM"
+if not exist "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\presets\" mkdir "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\presets\"
+if not exist "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\fonts\" mkdir "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\fonts\"
+if not exist "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\shaders\" mkdir "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\shaders\"
+xcopy $(SolutionDir)presets_milkdrop\* $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)fonts\*.ttf $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\fonts\ /Y
+xcopy $(SolutionDir)src\libprojectM\Renderer\*.cg $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\shaders\ /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
