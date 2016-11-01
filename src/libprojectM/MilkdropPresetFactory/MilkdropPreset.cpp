@@ -73,27 +73,26 @@ MilkdropPreset::~MilkdropPreset()
 
   traverse<TraverseFunctors::Delete<Param> >(user_param_tree);
 
-  /// Testing deletion of render items by the preset. would be nice if it worked, 
+  /// Testing deletion of render items by the preset. would be nice if it worked,
   /// and seems to be working if you use a mutex on the preset switching.
-  
-  for (PresetOutputs::cwave_container::iterator pos = customWaves.begin(); 
+
+  for (PresetOutputs::cwave_container::iterator pos = customWaves.begin();
 	pos != customWaves.end(); ++pos ) {
   //  __android_log_print(ANDROID_LOG_ERROR, "projectM", "not freeing wave %x", *pos);
     delete(*pos);
   }
 
-  for (PresetOutputs::cshape_container::iterator pos = customShapes.begin(); 
+  for (PresetOutputs::cshape_container::iterator pos = customShapes.begin();
 	pos != customShapes.end(); ++pos ) {
 //__android_log_print(ANDROID_LOG_ERROR, "projectM", "not freeing shape %x", *pos);
 
 	delete(*pos);
   }
   customWaves.clear();
- customShapes.clear();
- presetOutputs().customWaves.clear();
- presetOutputs().customShapes.clear();
-  presetOutputs().drawables.clear();
-
+  customShapes.clear();
+  //presetOutputs().customWaves.clear();
+  //presetOutputs().customShapes.clear();
+  //presetOutputs().drawables.clear();
 }
 
 /* Adds a per pixel equation according to its string name. This
@@ -540,7 +539,7 @@ int MilkdropPreset::loadPresetFile(const std::string & pathname)
 }
 
 const std::string & MilkdropPreset::name() const {
-	
+
 	return name().empty() ? filename() : name();
 }
 

@@ -632,22 +632,20 @@ static void *thread_callback(void *prjm) {
 
     void projectM::destroyPresetTools()
     {
+        delete m_presetPos;
+        m_presetPos = nullptr;
 
-        if ( m_presetPos )
-            delete ( m_presetPos );
+        delete m_presetChooser ;
+        m_presetChooser = nullptr;
 
-        m_presetPos = 0;
+        delete m_presetLoader;
+        m_presetLoader = nullptr;
 
-        if ( m_presetChooser )
-            delete ( m_presetChooser );
+        delete _matcher;
+        _matcher = nullptr;
 
-        m_presetChooser = 0;
-
-        if ( m_presetLoader )
-            delete ( m_presetLoader );
-
-        m_presetLoader = 0;
-
+        delete _merger;
+        _merger = nullptr;
     }
 
     /// @bug queuePreset case isn't handled
