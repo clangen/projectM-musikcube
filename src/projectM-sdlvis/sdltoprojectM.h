@@ -44,10 +44,13 @@
 #endif
 
 projectMEvent sdl2pmEvent(SDL_Event event) {
+    if (event.type == SDL_WINDOWEVENT) {
+        if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+            return PROJECTM_VIDEORESIZE;
+        }
+    }
 
     switch (event.type) {
-        case SDL_WINDOWEVENT_RESIZED:
-            return PROJECTM_VIDEORESIZE;
         case SDL_KEYUP:
             return PROJECTM_KEYUP;
         case SDL_KEYDOWN:

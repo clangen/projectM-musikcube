@@ -21,6 +21,7 @@
 
 #include <math.h>
 #include <SDL_opengl.h>
+#include <atomic>
 
 #include <projectM.hpp>
 
@@ -31,7 +32,9 @@
 
 static projectM* pm = nullptr;
 static SDL_Window* screen = nullptr;
-static bool initialized = false;
+static std::atomic<bool> initialized = false;
+static std::atomic<bool> quit = false;
+static HANDLE thread = nullptr;
 
 static void threadProc(void* unused) {
     int fullscreen = 0;
@@ -48,7 +51,7 @@ static void threadProc(void* unused) {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
     if (fullscreen == 0) {
-        flags = SDL_WINDOW_OPENGL;
+        flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
     }
     else {
         flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
@@ -63,7 +66,7 @@ static void threadProc(void* unused) {
             height,
             flags);
 
-    SDL_GL_CreateContext(screen);
+    SDL_GLContext glContext = SDL_GL_CreateContext(screen);
 
     if (screen == NULL) {
         return;
@@ -72,7 +75,7 @@ static void threadProc(void* unused) {
     pm = new projectM("z:\\src\\projectM.inp");
     pm->projectM_resetGL(width, height);
 
-    while (true) {
+    while (!quit) {
         projectMEvent evt;
         projectMKeycode key;
         projectMModifier mod;
@@ -86,19 +89,28 @@ static void threadProc(void* unused) {
             if (evt == PROJECTM_KEYDOWN) {
                 pm->key_handler(evt, key, mod);
             }
+            else if (evt == PROJECTM_VIDEORESIZE) {
+                SDL_GetWindowSize(screen, &width, &height);
+                pm->projectM_resetGL(width, height);
+                pm->projectM_resetTextures();
+            }
         }
 
         pm->renderFrame();
         SDL_GL_SwapWindow(screen);
     }
 
+    delete pm;
+    pm = nullptr;
+
+    SDL_GL_DeleteContext(glContext);
+    SDL_DestroyWindow(screen);
+    screen = nullptr;
+
     printf("Worker thread: Exiting\n");
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved) {
-    if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
-        _beginthread(threadProc, 0, 0);
-    }
     return true;
 }
 
@@ -117,9 +129,28 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
         }
 
         virtual void Write(musik::core::audio::IBuffer* buffer) {
-            if (pm) {
+            if (Visible() && pm) {
                 pm->pcm()->addPCMfloat(buffer->BufferPointer(), buffer->Samples());
             }
+        }
+
+        virtual void Show() {
+            if (!Visible()) {
+                thread = (HANDLE) _beginthread(threadProc, 0, 0);
+            }
+        }
+
+        virtual void Hide() {
+            if (Visible()) {
+                quit = true;
+                WaitForSingleObject(thread, INFINITE);
+                thread = nullptr;
+                quit = false;
+            }
+        }
+
+        virtual bool Visible() {
+            return (thread != nullptr);
         }
 };
 
