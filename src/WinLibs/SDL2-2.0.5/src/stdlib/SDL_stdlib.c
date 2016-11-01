@@ -138,7 +138,7 @@ double
 SDL_fabs(double x)
 {
 #if defined(HAVE_FABS)
-    return fabs(x); 
+    return fabs(x);
 #else
     return SDL_uclibc_fabs(x);
 #endif /* HAVE_FABS */
@@ -196,7 +196,7 @@ SDL_sin(double x)
 #endif /* HAVE_SIN */
 }
 
-float 
+float
 SDL_sinf(float x)
 {
 #if defined(HAVE_SINF)
@@ -273,10 +273,10 @@ int SDL_tolower(int x) { return ((x) >= 'A') && ((x) <= 'Z') ? ('a'+((x)-'A')) :
 
 #if defined(_MSC_VER)
 
-#ifndef __FLTUSED__
-#define __FLTUSED__
-__declspec(selectany) int _fltused = 1;
-#endif
+//#ifndef __FLTUSED__
+//#define __FLTUSED__
+//__declspec(selectany) int _fltused = 1;
+//#endif
 
 /* The optimizer on Visual Studio 2005 and later generates memcpy() calls */
 #if (_MSC_VER >= 1400) && defined(_WIN64) && !defined(_DEBUG) && !(_MSC_VER >= 1900 && defined(_MT))
@@ -288,7 +288,7 @@ void * memcpy ( void * destination, const void * source, size_t num )
     const Uint8 *src = (const Uint8 *)source;
     Uint8 *dst = (Uint8 *)destination;
     size_t i;
-    
+
     /* All WIN64 architectures have SSE, right? */
     if (!((uintptr_t) src & 15) && !((uintptr_t) dst & 15)) {
         __m128 values[4];
