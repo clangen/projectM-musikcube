@@ -29,7 +29,6 @@ Renderer::Renderer(int width, int height, int gx, int gy, int texsize, BeatDetec
 	this->showpreset = false;
 	this->showhelp = false;
 	this->showstats = false;
-	this->studio = false;
 	this->realfps = 0;
 
 	this->drawtitle = 0;
@@ -595,6 +594,16 @@ void Renderer::draw_title()
 #endif /** USE_FTGL */
 }
 
+static inline void drawText(float x, float y, FTGLPixmapFont* font, const char* text) {
+    glColor4f(0.0, 0.0, 0.0, 1.0);
+    glRasterPos2f(x + 0.0015, y - 0.0015);
+    font->Render(text);
+
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glRasterPos2f(x, y);
+    font->Render(text);
+}
+
 void Renderer::draw_preset()
 {
 #ifdef USE_FTGL
@@ -608,12 +617,10 @@ void Renderer::draw_preset()
 
 	glRasterPos2f(0.01, 0.01);
 
-	title_font->FaceSize((unsigned) (12 * (this->vh / 512.0)));
-	if (this->noSwitch)
-		title_font->Render("[LOCKED]  ");
-	title_font->FaceSize((unsigned) (20 * (this->vh / 512.0)));
-
-	title_font->Render(this->presetName().c_str());
+    title_font->FaceSize((unsigned)(12 * (this->vh / 512.0)));
+    std::string presetText = (this->noSwitch) ? "[LOCKED]  " : "";
+    presetText += this->presetName();
+    drawText(0.01, 0.01, title_font, presetText.c_str());
 
 	//glPopMatrix();
 	// glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -631,46 +638,20 @@ void Renderer::draw_help()
 	glTranslatef(0, 1, 0);
 	//glScalef(this->vw*.02,this->vh*.02 ,0);
 
-
-	title_font->FaceSize((unsigned) (18 * (this->vh / 512.0)));
-
-	glRasterPos2f(0.01, -0.05);
-	title_font->Render("Help");
-
-	glRasterPos2f(0.01, -0.09);
-	title_font->Render("----------------------------");
-
-	glRasterPos2f(0.01, -0.13);
-	title_font->Render("F1: This help menu");
-
-	glRasterPos2f(0.01, -0.17);
-	title_font->Render("F2: Show song title");
-
-	glRasterPos2f(0.01, -0.21);
-	title_font->Render("F3: Show preset name");
-
-	glRasterPos2f(0.01, -0.25);
-	title_font->Render("F4: Show Rendering Settings");
-
-	glRasterPos2f(0.01, -0.29);
-	title_font->Render("F5: Show FPS");
-
-	glRasterPos2f(0.01, -0.35);
-	title_font->Render("F: Fullscreen");
-
-	glRasterPos2f(0.01, -0.39);
-	title_font->Render("L: Lock/Unlock Preset");
-
-	glRasterPos2f(0.01, -0.43);
-	title_font->Render("M: Show Menu");
-
-	glRasterPos2f(0.01, -0.49);
-	title_font->Render("R: Random preset");
-	glRasterPos2f(0.01, -0.53);
-	title_font->Render("N: Next preset");
-
-	glRasterPos2f(0.01, -0.57);
-	title_font->Render("P: Previous preset");
+	title_font->FaceSize((unsigned) (12 * (this->vh / 512.0)));
+    drawText(0.03, -0.05, title_font, "F1: toggle help");
+    drawText(0.03, -0.09, title_font, "s: show preset name");
+    drawText(0.03, -0.13, title_font, "space: lock/unlock preset");
+    drawText(0.03, -0.17, title_font, "r: random preset");
+    drawText(0.03, -0.21, title_font, "n: next preset");
+    drawText(0.03, -0.25, title_font, "p: previous preset");
+    drawText(0.03, -0.29, title_font, "");
+    drawText(0.03, -0.35, title_font, "");
+    drawText(0.03, -0.39, title_font, "");
+    drawText(0.03, -0.43, title_font, "");
+    drawText(0.03, -0.49, title_font, "");
+    drawText(0.03, -0.53, title_font, "");
+    drawText(0.03, -0.57, title_font, "");
 
 	glPopMatrix();
 	//         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);

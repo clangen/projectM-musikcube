@@ -121,9 +121,6 @@ void projectM::default_key_handler( projectMEvent event, projectMKeycode keycode
 			if (beatDetect->beat_sensitivity < 0) beatDetect->beat_sensitivity = 0;
 	      break;
 		case PROJECTM_K_h:
- 		  renderer->showhelp = !renderer->showhelp;
-	      renderer->showstats= false;
-	      renderer->showfps=false;
 	    case PROJECTM_K_F1:
 	      renderer->showhelp = !renderer->showhelp;
 	      renderer->showstats=false;
@@ -141,6 +138,7 @@ void projectM::default_key_handler( projectMEvent event, projectMKeycode keycode
 		if (!renderer->showhelp)
 	       		renderer->showstats = !renderer->showstats;
 	      break;
+        case PROJECTM_K_s:
 	    case PROJECTM_K_F3: {
 	      renderer->showpreset = !renderer->showpreset;
 	      break;
@@ -153,9 +151,6 @@ void projectM::default_key_handler( projectMEvent event, projectMKeycode keycode
 #else
         case PROJECTM_K_F8:
 #endif
-
-	      renderer->studio = !renderer->studio;
-	      break;
 
 	    case PROJECTM_K_ESCAPE: {
 //	        exit( 1 );
@@ -190,8 +185,6 @@ void projectM::default_key_handler( projectMEvent event, projectMKeycode keycode
 	    case PROJECTM_K_l:
 		renderer->noSwitch=!renderer->noSwitch;
 	      break;
-	    case PROJECTM_K_s:
-            	renderer->studio = !renderer->studio;
 	    case PROJECTM_K_i:
 	        break;
 	    case PROJECTM_K_z:

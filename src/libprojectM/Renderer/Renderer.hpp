@@ -50,7 +50,6 @@ public:
   bool showhelp;
   bool showstats;
 
-  bool studio;
   bool correction;
 
   bool noSwitch;

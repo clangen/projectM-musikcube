@@ -45,7 +45,7 @@ static projectM* pm = nullptr;
 static SDL_Window* screen = nullptr;
 static std::atomic<bool> initialized = false;
 static std::atomic<bool> quit = false;
-static HANDLE thread = nullptr;
+static std::atomic<HANDLE> thread = nullptr;
 
 #ifdef WIN32
 static void setupDataDirectory(HMODULE module) {
@@ -113,8 +113,25 @@ static void threadProc(void* unused) {
             key = sdl2pmKeycode(event.key.keysym.sym);
             mod = sdl2pmModifier(event.key.keysym.mod);
 
+            if (event.type == SDL_WINDOWEVENT) {
+                if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
+                    quit = true;
+                    continue;
+                }
+            }
+
             if (evt == PROJECTM_KEYDOWN) {
-                pm->key_handler(evt, key, mod);
+                if (event.key.keysym.sym == SDLK_SPACE) {
+                    /* hack: spacebar locks. */
+                    pm->key_handler(evt, PROJECTM_K_l, mod);
+                }
+                else if (key == PROJECTM_K_ESCAPE) {
+                    quit = true;
+                    continue;
+                }
+                else {
+                    pm->key_handler(evt, key, mod);
+                }
             }
             else if (evt == PROJECTM_VIDEORESIZE) {
                 SDL_GetWindowSize(screen, &width, &height);
@@ -140,8 +157,7 @@ static void threadProc(void* unused) {
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(screen);
     screen = nullptr;
-
-    printf("Worker thread: Exiting\n");
+    thread = nullptr;
 }
 
 #ifdef WIN32
@@ -176,6 +192,7 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
 
         virtual void Show() {
             if (!Visible()) {
+                quit = false;
                 thread = (HANDLE) _beginthread(threadProc, 0, 0);
             }
         }
