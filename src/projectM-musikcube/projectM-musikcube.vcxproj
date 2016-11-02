@@ -93,7 +93,7 @@
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(SolutionDir)bin\release\projectM-musikcube.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>msvcrt.lib;version.lib;winmm.lib;Imm32.lib;shlwapi.lib;opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_lib.lib;freetype.lib;glew_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>LIBCMT.LIB;version.lib;winmm.lib;Imm32.lib;shlwapi.lib;opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_lib.lib;freetype.lib;glew_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy $(TargetPath) $(SolutionDir)..\musikcube\bin\release\plugins\ /Y
@@ -102,6 +102,10 @@ if not exist "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\presets\" 
 if not exist "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\fonts\" mkdir "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\fonts\"
 if not exist "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\shaders\" mkdir "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\shaders\"
 xcopy $(SolutionDir)presets_milkdrop\* $(SolutionDir)..\musikcube\bin\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_104\* $(SolutionDir)..\musikcube\bin\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_200\* $(SolutionDir)..\musikcube\bin\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_projectM\* $(SolutionDir)..\musikcube\bin\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_yin\* $(SolutionDir)..\musikcube\bin\release\plugins\projectM\presets\ /Y
 xcopy $(SolutionDir)fonts\*.ttf $(SolutionDir)..\musikcube\bin\release\plugins\projectM\fonts\ /Y
 xcopy $(SolutionDir)src\libprojectM\Renderer\*.cg $(SolutionDir)..\musikcube\bin\release\plugins\projectM\shaders\ /Y
 xcopy $(SolutionDir)src\libprojectM\config.inp $(SolutionDir)..\musikcube\bin\release\plugins\projectM\ /Y</Command>
@@ -145,7 +149,7 @@ xcopy $(SolutionDir)src\libprojectM\config.inp $(SolutionDir)..\musikcube\bin\re
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(SolutionDir)bin\debug\projectM-musikcube.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>msvcrtd.lib;version.lib;winmm.lib;Imm32.lib;shlwapi.lib;opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_lib.lib;freetype.lib;glew_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>LIBCMTD.LIB;version.lib;winmm.lib;Imm32.lib;shlwapi.lib;opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_lib.lib;freetype.lib;glew_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
@@ -156,6 +160,10 @@ if not exist "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\presets\" mk
 if not exist "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\fonts\" mkdir "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\fonts\"
 if not exist "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\shaders\" mkdir "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\shaders\"
 xcopy $(SolutionDir)presets_milkdrop\* $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_104\* $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_200\* $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_projectM\* $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_yin\* $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\presets\ /Y
 xcopy $(SolutionDir)fonts\*.ttf $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\fonts\ /Y
 xcopy $(SolutionDir)src\libprojectM\Renderer\*.cg $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\shaders\ /Y
 xcopy $(SolutionDir)src\libprojectM\config.inp $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\ /Y</Command>
