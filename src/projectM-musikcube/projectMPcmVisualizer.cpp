@@ -57,6 +57,14 @@ static void setupDataDirectory(HMODULE module) {
         }
     }
 }
+
+static void compactHeaps() {
+    HANDLE heaps[128];
+    int heapCount = GetProcessHeaps(128, heaps);
+    for (int i = 0; i < heapCount; i++) {
+        HeapCompact(heaps[i], 0);
+    }
+}
 #endif
 
 static void threadProc(void* unused) {
@@ -158,6 +166,10 @@ static void threadProc(void* unused) {
     SDL_DestroyWindow(screen);
     screen = nullptr;
     thread = nullptr;
+
+#ifdef WIN32
+    compactHeaps();
+#endif
 }
 
 #ifdef WIN32
