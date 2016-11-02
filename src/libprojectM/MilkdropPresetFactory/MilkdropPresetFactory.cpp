@@ -130,11 +130,11 @@ void resetPresetOutputs(PresetOutputs * presetOutputs)
 //	for ( std::vector<CustomWave*>::iterator pos = presetOutputs->customWaves.begin();
 //	        pos != presetOutputs->customWaves.end(); ++pos )
 //		if ( *pos != 0 ) delete ( *pos );
-	
+
 //	for ( std::vector<CustomShape*>::iterator pos = presetOutputs->customShapes.begin();
 //	        pos != presetOutputs->customShapes.end(); ++pos )
 //		if ( *pos != 0 ) delete ( *pos );
-	
+
 	presetOutputs->customWaves.clear();
 	presetOutputs->customShapes.clear();
 
@@ -206,22 +206,30 @@ PresetOutputs* MilkdropPresetFactory::createPresetOutputs(int gx, int gy)
 
 	for (int i = 0;i<NUM_Q_VARIABLES;i++)
 		presetOutputs->q[i] = 0;
-	
+
 	/* Q AND T VARIABLES END */
     return presetOutputs;
 }
 
 
 std::shared_ptr<Preset> MilkdropPresetFactory::allocate(const std::string & url, const std::string & name, const std::string & author) {
-
     PresetOutputs *presetOutputs = _usePresetOutputs ? _presetOutputs : _presetOutputs2;
 
-	_usePresetOutputs = !_usePresetOutputs;
-	resetPresetOutputs(presetOutputs);
+    _usePresetOutputs = !_usePresetOutputs;
+    resetPresetOutputs(presetOutputs);
 
-	std::string path;
-	if (PresetFactory::protocol(url, path) == PresetFactory::IDLE_PRESET_PROTOCOL) {
-		return IdlePresets::allocate(path, *presetOutputs);
-	} else
-		return std::shared_ptr<Preset>(new MilkdropPreset(url, name, *presetOutputs));
+    std::string path;
+    if (PresetFactory::protocol(url, path) == PresetFactory::IDLE_PRESET_PROTOCOL) {
+        return IdlePresets::allocate(path, *presetOutputs);
+    }
+    else {
+        try {
+            return std::shared_ptr<Preset>(new MilkdropPreset(url, name, *presetOutputs));
+        }
+        catch (...) {
+            /* if we can't parse the requested preset, go ahead and return the
+            idle preset instead of crashing. */
+            return IdlePresets::allocate(path, *presetOutputs);
+        }
+    }
 }
