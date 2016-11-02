@@ -103,7 +103,7 @@ static void threadProc(void* unused) {
         return;
     }
 
-    std::string configFn = GetProjectMDataDirectory() + "\\projectM.inp";
+    std::string configFn = GetProjectMDataDirectory() + "\\config.inp";
     pm = new projectM(configFn);
     pm->projectM_resetGL(width, height);
 
@@ -173,7 +173,7 @@ static void threadProc(void* unused) {
 }
 
 #ifdef WIN32
-#if true
+#if false
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
     if (reason == DLL_PROCESS_ATTACH) {
         setupDataDirectory(hModule);

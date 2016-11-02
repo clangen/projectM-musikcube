@@ -103,7 +103,8 @@ if not exist "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\fonts\" mk
 if not exist "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\shaders\" mkdir "$(SolutionDir)..\musikcube\bin\release\plugins\projectM\shaders\"
 xcopy $(SolutionDir)presets_milkdrop\* $(SolutionDir)..\musikcube\bin\release\plugins\projectM\presets\ /Y
 xcopy $(SolutionDir)fonts\*.ttf $(SolutionDir)..\musikcube\bin\release\plugins\projectM\fonts\ /Y
-xcopy $(SolutionDir)src\libprojectM\Renderer\*.cg $(SolutionDir)..\musikcube\bin\release\plugins\projectM\shaders\ /Y</Command>
+xcopy $(SolutionDir)src\libprojectM\Renderer\*.cg $(SolutionDir)..\musikcube\bin\release\plugins\projectM\shaders\ /Y
+xcopy $(SolutionDir)src\libprojectM\config.inp $(SolutionDir)..\musikcube\bin\release\plugins\projectM\ /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -156,7 +157,8 @@ if not exist "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\fonts\" mkdi
 if not exist "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\shaders\" mkdir "$(SolutionDir)..\musikcube\bin\debug\plugins\projectM\shaders\"
 xcopy $(SolutionDir)presets_milkdrop\* $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\presets\ /Y
 xcopy $(SolutionDir)fonts\*.ttf $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\fonts\ /Y
-xcopy $(SolutionDir)src\libprojectM\Renderer\*.cg $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\shaders\ /Y</Command>
+xcopy $(SolutionDir)src\libprojectM\Renderer\*.cg $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\shaders\ /Y
+xcopy $(SolutionDir)src\libprojectM\config.inp $(SolutionDir)..\musikcube\bin\debug\plugins\projectM\ /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
