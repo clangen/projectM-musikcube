@@ -229,7 +229,7 @@ std::shared_ptr<Preset> MilkdropPresetFactory::allocate(const std::string & url,
         catch (...) {
             /* if we can't parse the requested preset, go ahead and return the
             idle preset instead of crashing. */
-            return IdlePresets::allocate(path, *presetOutputs);
+            return IdlePresets::allocate(IdlePresets::IDLE_PRESET_NAME, *presetOutputs);
         }
     }
 }

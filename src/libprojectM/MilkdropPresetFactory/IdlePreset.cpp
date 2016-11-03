@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 #include "MilkdropPreset.hpp"
+
 const std::string IdlePresets::IDLE_PRESET_NAME
 	("Geiss & Sperl - Feedback (projectM idle HDR mix).milk");
 

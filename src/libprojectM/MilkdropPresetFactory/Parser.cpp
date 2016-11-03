@@ -196,10 +196,10 @@ token_t Parser::parseToken(std::istream &  fs, char * string)
 		int buf_size = (int)buffer.str().length();
 		// <= to also remove equal sign parsing from stream
 		for (int k = 0; k <= buf_size; k++) {
-			if (fs)
-				fs.unget();
-			else
-				abort();
+            if (fs)
+                fs.unget();
+            else
+                throw std::exception("parse failed");
 		}
 		return tEOL;
 	}
@@ -1732,10 +1732,10 @@ void Parser::readStringUntil(std::istream & fs, std::string * out_buffer, bool w
 						int buf_size = (int)buffer.str().length();
 						// <= to also remove equal sign parsing from stream
 						for (int k = 0; k <= buf_size; k++) {
-							if (fs)
-								fs.unget();
-							else
-								abort();
+                            if (fs)
+                                fs.unget();
+                            else
+                                throw std::exception("parse failed");
 						}
 						return;
 					}
