@@ -20,6 +20,11 @@
  */
 
 #include <math.h>
+
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
 #include <SDL_opengl.h>
 
 #include <atomic>
@@ -42,10 +47,11 @@
 using namespace std::chrono;
 
 static projectM* pm = nullptr;
-static SDL_Window* screen = nullptr;
 static std::atomic<bool> initialized = false;
 static std::atomic<bool> quit = false;
-static std::atomic<HANDLE> thread = nullptr;
+static std::atomic<bool> thread = false;
+static std::mutex pcmMutex, threadMutex;
+static std::condition_variable threadCondition;
 
 #ifdef WIN32
 static void setupDataDirectory(HMODULE module) {
@@ -67,54 +73,64 @@ static void compactHeaps() {
 }
 #endif
 
-static void threadProc(void* unused) {
-    int fullscreen = 0;
-    int width = 784;
-    int height = 784;
-    int flags = 0;
-
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        return;
-    }
-
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    if (fullscreen == 0) {
-        flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
-    }
-    else {
-        flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
-    }
-
-    screen =
-        SDL_CreateWindow(
-            "projectM",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            width,
-            height,
-            flags);
-
-    SDL_GLContext glContext = SDL_GL_CreateContext(screen);
-
-    if (screen == NULL) {
-        return;
-    }
-
-    std::string configFn = GetProjectMDataDirectory() + "\\config.inp";
-    pm = new projectM(configFn);
-    pm->projectM_resetGL(width, height);
+static void threadProc() {
+    SDL_Event event;
+    SDL_GLContext glContext = nullptr;
+    SDL_Window* screen = nullptr;
 
     projectMEvent evt;
     projectMKeycode key;
     projectMModifier mod;
-    SDL_Event event;
+
     long long start, end;
+    bool recreate = true;
+    bool fullscreen = false;
+    int width = 784;
+    int height = 784;
+    int flags = 0;
+    int x = SDL_WINDOWPOS_UNDEFINED;
+    int y = SDL_WINDOWPOS_UNDEFINED;
+
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        goto cleanup;
+    }
 
     while (!quit) {
         auto start = system_clock::now();
+
+        if (recreate) {
+            if (glContext) {
+                SDL_GL_DeleteContext(glContext);
+            }
+
+            if (screen) {
+                SDL_DestroyWindow(screen);
+            }
+
+            SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+            SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+            SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+            if (fullscreen) {
+                flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN;
+            }
+            else {
+                flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+            }
+
+            screen = SDL_CreateWindow(
+                "projectM", x, y, width, height, flags);
+
+            glContext = SDL_GL_CreateContext(screen);
+
+            if (!pm) {
+                std::string configFn = GetProjectMDataDirectory() + "\\config.inp";
+                pm = new projectM(configFn);
+                pm->projectM_resetGL(width, height);
+            }
+
+            recreate = false;
+        }
 
         while (SDL_PollEvent(&event)) {
             evt = sdl2pmEvent(event);
@@ -133,6 +149,15 @@ static void threadProc(void* unused) {
                     /* hack: spacebar locks. */
                     pm->key_handler(evt, PROJECTM_K_l, mod);
                 }
+                else if (key == PROJECTM_K_f) {
+                    if (!fullscreen) {
+                        SDL_GetWindowPosition(screen, &x, &y);
+                        SDL_GetWindowSize(screen, &width, &height);
+                    }
+
+                    fullscreen = !fullscreen;
+                    recreate = true;
+                }
                 else if (key == PROJECTM_K_ESCAPE) {
                     quit = true;
                     continue;
@@ -148,7 +173,11 @@ static void threadProc(void* unused) {
             }
         }
 
-        pm->renderFrame();
+        {
+            std::unique_lock<std::mutex> lock(pcmMutex);
+            pm->renderFrame();
+        }
+
         SDL_GL_SwapWindow(screen);
 
         auto end = system_clock::now();
@@ -164,8 +193,14 @@ static void threadProc(void* unused) {
 
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(screen);
-    screen = nullptr;
-    thread = nullptr;
+
+cleanup:
+    thread = false;
+
+    {
+        std::unique_lock<std::mutex> lock(threadMutex);
+        threadCondition.notify_all();
+    }
 
 #ifdef WIN32
     compactHeaps();
@@ -208,6 +243,7 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
 
         virtual void Write(musik::core::audio::IBuffer* buffer) {
             if (Visible() && pm) {
+                std::unique_lock<std::mutex> lock(pcmMutex);
                 pm->pcm()->addPCMfloat(buffer->BufferPointer(), buffer->Samples());
             }
         }
@@ -215,21 +251,25 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
         virtual void Show() {
             if (!Visible()) {
                 quit = false;
-                thread = (HANDLE) _beginthread(threadProc, 0, 0);
+                thread = true;
+                std::thread thread(threadProc);
+                thread.detach();
             }
         }
 
         virtual void Hide() {
             if (Visible()) {
                 quit = true;
-                WaitForSingleObject(thread, INFINITE);
-                thread = nullptr;
-                quit = false;
+
+                while (thread) {
+                    std::unique_lock<std::mutex> lock(threadMutex);
+                    threadCondition.wait(lock);
+                }
             }
         }
 
         virtual bool Visible() {
-            return (thread != nullptr);
+            return thread;
         }
 };
 

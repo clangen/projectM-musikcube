@@ -598,6 +598,8 @@ static inline void drawText(float x, float y, FTGLPixmapFont* font, const char* 
     glColor4f(0.0, 0.0, 0.0, 1.0);
     glRasterPos2f(x + 0.0015, y - 0.0015);
     font->Render(text);
+    glRasterPos2f(x + 0.001, y - 0.001);
+    font->Render(text);
 
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glRasterPos2f(x, y);
@@ -639,13 +641,13 @@ void Renderer::draw_help()
 	//glScalef(this->vw*.02,this->vh*.02 ,0);
 
 	title_font->FaceSize((unsigned) (12 * (this->vh / 512.0)));
-    drawText(0.03, -0.05, title_font, "F1: toggle help");
+    drawText(0.03, -0.05, title_font, "h: toggle help");
     drawText(0.03, -0.09, title_font, "s: show preset name");
     drawText(0.03, -0.13, title_font, "space: lock/unlock preset");
     drawText(0.03, -0.17, title_font, "r: random preset");
     drawText(0.03, -0.21, title_font, "n: next preset");
     drawText(0.03, -0.25, title_font, "p: previous preset");
-    drawText(0.03, -0.29, title_font, "");
+    drawText(0.03, -0.29, title_font, "f: toggle full screen");
     drawText(0.03, -0.35, title_font, "");
     drawText(0.03, -0.39, title_font, "");
     drawText(0.03, -0.43, title_font, "");
