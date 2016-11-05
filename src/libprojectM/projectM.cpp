@@ -144,7 +144,7 @@ bool projectM::writeConfig(const std::string & configFile, const Settings & sett
 
 void projectM::readConfig (const std::string & configFile )
 {
-    std::cout << "[projectM] config file: " << configFile << std::endl;
+    std::cerr << "[projectM] config file: " << configFile << std::endl;
 
     std::string datadir = GetProjectMDataDirectory();
 
@@ -489,9 +489,8 @@ void projectM::readSettings (const Settings & settings )
         *m_presetPos = m_presetChooser->end();
 
         // Load idle preset
-        std::cerr << "[projectM] Allocating idle preset..." << std::endl;
-        m_activePreset = m_presetLoader->loadPreset
-        ("idle://Geiss & Sperl - Feedback (projectM idle HDR mix).milk");
+        m_activePreset = m_presetLoader
+            ->loadPreset("idle://Geiss & Sperl - Feedback (projectM idle HDR mix).milk");
 
         renderer->SetPipeline(m_activePreset->pipeline());
 

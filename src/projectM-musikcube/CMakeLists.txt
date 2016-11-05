@@ -6,20 +6,25 @@ set(PROJECTM_MUSIKCUBE_VERSION 1.0.0)
 
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11")
 
-SET(projectM_musikcube_SOURCES 
+set(projectM_musikcube_SOURCES 
+	Utility.cpp
 	projectMPcmVisualizer.cpp)
 
-# ADD_LIBRARY(projectM_musikcube SHARED ${projectM_musikcube_SOURCES})
-ADD_EXECUTABLE(projectM_musikcube ${projectM_musikcube_SOURCES})
+set(projectM_musikcube_plugin_SOURCES
+	Utility.cpp
+	projectMPcmVisualizerNix.cpp)
 
-INCLUDE_DIRECTORIES(
+add_executable(projectM_musikcube ${projectM_musikcube_SOURCES})
+add_library(projectM_musikcube_plugin SHARED ${projectM_musikcube_plugin_SOURCES})
+
+include_directories(
     "../../../musikcube/src/core/"
     "../libprojectM"
 	"/usr/local/include"
 	${projectM_SOURCE_DIR}
 )
 
-LINK_DIRECTORIES(
+link_directories(
     "../libprojectM"
 	"/usr/local/lib"
 )
