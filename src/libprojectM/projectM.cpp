@@ -54,27 +54,19 @@
 #include "TimeKeeper.hpp"
 #include "RenderItemMergeFunction.hpp"
 
-#ifdef USE_THREADS
-#include "pthread.h"
-
-pthread_mutex_t mutex;
-pthread_cond_t  condition;
-pthread_t thread;
-
-#ifdef SYNC_PRESET_SWITCHES
-pthread_mutex_t preset_mutex;
-#endif
+#ifdef WIN32
+#define CMAKE_INSTALL_PREFIX "z://projectM//"
 #endif
 
 static std::string dataDirectory;
 
-inline void SetProjectMDataDirectory(const std::string& directory) {
+void SetProjectMDataDirectory(const std::string& directory) {
     dataDirectory = directory;
 }
 
-inline std::string GetProjectMDataDirectory() {
+std::string GetProjectMDataDirectory() {
     if (dataDirectory.size()) {
-        return dataDirectory + "\\projectM";
+        return dataDirectory + "/projectM";
     }
 
     return std::string(CMAKE_INSTALL_PREFIX) + std::string("/share/projectM");
@@ -82,41 +74,13 @@ inline std::string GetProjectMDataDirectory() {
 
 projectM::~projectM()
 {
-
-    #ifdef USE_THREADS
-    std::cout << "[projectM] thread ";
-    printf("c");
-    running = false;
-    printf("l");
-    pthread_cond_signal(&condition);
-    printf("e");
-    pthread_mutex_unlock( &mutex );
-    printf("a");
-    pthread_detach(thread);
-    printf("n");
-    pthread_cond_destroy(&condition);
-    printf("u");
-    pthread_mutex_destroy( &mutex );
-    #ifdef SYNC_PRESET_SWITCHES
-    pthread_mutex_destroy( &preset_mutex );
-    #endif
-
-    printf("p");
-    std::cout << std::endl;
-    #endif
     destroyPresetTools();
 
-    if ( renderer )
-        delete ( renderer );
-    if ( beatDetect )
-        delete ( beatDetect );
-    if ( _pcm ) {
-        delete ( _pcm );
-        _pcm = 0;
-    }
-
-    delete(_pipelineContext);
-    delete(_pipelineContext2);
+    delete renderer;
+    delete beatDetect;
+    delete _pcm;
+    delete _pipelineContext;
+    delete _pipelineContext2;
 }
 
 unsigned projectM::initRenderToTexture()
@@ -195,37 +159,13 @@ void projectM::readConfig (const std::string & configFile )
     ( "Smooth Preset Duration", config.read<int>("Smooth Transition Duration", 10));
     _settings.presetDuration = config.read<int> ( "Preset Duration", 15 );
 
-    #ifdef LINUX
-    _settings.presetURL = config.read<string> ( "Preset Path", datadir + "/presets" );
-    #endif
+    // _settings.presetURL = config.read<string> ( "Preset Path", datadir + "/presets" );
+    // _settings.titleFontURL = config.read<string>("Title Font", datadir + "/fonts/Vera.ttf");
+    // _settings.menuFontURL = config.read<string>("Menu Font", datadir + "/fonts/VeraMono.ttf");
 
-    #ifdef __APPLE__
-    /// @bug awful hardcoded hack- need to add intelligence to cmake wrt bundling - carm
-    _settings.presetURL = config.read<string> ( "Preset Path", "../Resources/presets" );
-    #endif
-
-    #ifdef WIN32
-    _settings.presetURL = config.read<string> ( "Preset Path", datadir + "/presets" );
-    #endif
-
-    #ifdef __APPLE__
-    _settings.titleFontURL = config.read<string>
-    ( "Title Font",  "../Resources/fonts/Vera.tff");
-    _settings.menuFontURL = config.read<string>
-    ( "Menu Font", "../Resources/fonts/VeraMono.ttf");
-    #endif
-
-    #ifdef LINUX
-    _settings.titleFontURL = config.read<string>
-    ( "Title Font", projectM_FONT_TITLE );
-    _settings.menuFontURL = config.read<string>
-    ( "Menu Font", projectM_FONT_MENU );
-    #endif
-
-    #ifdef WIN32
-    _settings.titleFontURL = config.read<string>("Title Font", datadir + "/fonts/Vera.ttf");
-    _settings.menuFontURL = config.read<string>("Menu Font", datadir + "/fonts/VeraMono.ttf");
-    #endif
+    _settings.presetURL = datadir + "/presets";
+    _settings.titleFontURL = datadir + "/fonts/Vera.ttf";
+    _settings.menuFontURL = datadir + "/fonts/VeraMono.ttf";
 
     _settings.shuffleEnabled = config.read<bool> ( "Shuffle Enabled", true);
 
@@ -282,31 +222,6 @@ void projectM::readSettings (const Settings & settings )
 
 }
 
-#ifdef USE_THREADS
-static void *thread_callback(void *prjm) {
-    projectM *p = (projectM *)prjm;
-
-    p->thread_func(prjm);
-    return NULL;}
-
-
-    void *projectM::thread_func(void *vptr_args)
-    {
-        pthread_mutex_lock( &mutex );
-        //  printf("in thread: %f\n", timeKeeper->PresetProgressB());
-        while (true)
-        {
-            pthread_cond_wait( &condition, &mutex );
-            if(!running)
-            {
-                pthread_mutex_unlock( &mutex );
-                return NULL;
-            }
-            evaluateSecondPreset();
-        }
-    }
-    #endif
-
     void projectM::evaluateSecondPreset()
     {
         pipelineContext2().time = timeKeeper->GetRunningTime();
@@ -318,10 +233,6 @@ static void *thread_callback(void *prjm) {
 
     void projectM::renderFrame()
     {
-        #ifdef SYNC_PRESET_SWITCHES
-        pthread_mutex_lock(&preset_mutex);
-        #endif
-
         #ifdef DEBUG
         char fname[1024];
         FILE *f = NULL;
@@ -386,18 +297,8 @@ static void *thread_callback(void *prjm) {
             //	 printf("start thread\n");
             assert ( m_activePreset2.get() );
 
-            #ifdef USE_THREADS
-
-            pthread_cond_signal(&condition);
-            pthread_mutex_unlock( &mutex );
-            #endif
             m_activePreset->Render(*beatDetect, pipelineContext());
-
-            #ifdef USE_THREADS
-            pthread_mutex_lock( &mutex );
-            #else
             evaluateSecondPreset();
-            #endif
 
             Pipeline pipeline;
 
@@ -466,11 +367,6 @@ static void *thread_callback(void *prjm) {
         }
         this->timestart=getTicks ( &timeKeeper->startTime );
         #endif /** !WIN32 */
-
-	#ifdef SYNC_PRESET_SWITCHES
-        pthread_mutex_unlock(&preset_mutex);
-        #endif
-
     }
 
     void projectM::projectM_reset()
@@ -514,24 +410,6 @@ static void *thread_callback(void *prjm) {
         running = true;
 
         initPresetTools(gx, gy);
-
-
-        #ifdef USE_THREADS
-        pthread_mutex_init(&mutex, NULL);
-
-	#ifdef SYNC_PRESET_SWITCHES
-        pthread_mutex_init(&preset_mutex, NULL);
-	#endif
-
-        pthread_cond_init(&condition, NULL);
-        if (pthread_create(&thread, NULL, thread_callback, this) != 0)
-        {
-
-            std::cerr << "[projectM] failed to allocate a thread! try building with option USE_THREADS turned off" << std::endl;;
-            exit(EXIT_FAILURE);
-        }
-        pthread_mutex_lock( &mutex );
-        #endif
 
         /// @bug order of operatoins here is busted
         //renderer->setPresetName ( m_activePreset->name() );
@@ -807,19 +685,12 @@ void projectM::selectNext(const bool hardCut) {
  */
 void projectM::switchPreset(std::shared_ptr<Preset> & targetPreset) {
 
-	#ifdef SYNC_PRESET_SWITCHES
-	pthread_mutex_lock(&preset_mutex);
-	#endif
-
         targetPreset = m_presetPos->allocate();
 
         // Set preset name here- event is not done because at the moment this function is oblivious to smooth/hard switches
         renderer->setPresetName(targetPreset->name());
         renderer->SetPipeline(targetPreset->pipeline());
 
-	#ifdef SYNC_PRESET_SWITCHES
-	pthread_mutex_unlock(&preset_mutex);
-	#endif
     }
 
     void projectM::setPresetLock ( bool isLocked )

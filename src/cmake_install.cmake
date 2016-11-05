@@ -30,6 +30,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/Users/clangen/src/projectM-musikcube/src/libprojectM/cmake_install.cmake")
+  include("/Users/clangen/src/projectM-musikcube/src/projectM-musikcube/cmake_install.cmake")
 
 endif()
 

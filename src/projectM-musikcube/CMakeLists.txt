@@ -9,7 +9,8 @@ set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11")
 SET(projectM_musikcube_SOURCES 
 	projectMPcmVisualizer.cpp)
 
-ADD_LIBRARY(projectM_musikcube SHARED ${projectM_musikcube_SOURCES})
+# ADD_LIBRARY(projectM_musikcube SHARED ${projectM_musikcube_SOURCES})
+ADD_EXECUTABLE(projectM_musikcube ${projectM_musikcube_SOURCES})
 
 INCLUDE_DIRECTORIES(
     "../../../musikcube/src/core/"
@@ -29,10 +30,11 @@ find_library(GLEW_LIB GLEW HINTS /usr/lib /usr/local/lib)
 find_library(FTGL_LIB ftgl HINTS /usr/lib /usr/local/lib)
 find_library(FREETYPE_LIB freetype HINTS /usr/lib /usr/local/lib)
 find_library(SDL2_LIB SDL2 HINTS /usr/lib /usr/local/lib)
-find_library(PROJECTM_MAIN_LIB projectM HINTS ../libprojectM)
-find_library(PROJECTM_RENDERER_LIB Renderer HINTS ../libprojectM/Renderer)
-find_library(PROJECTM_MILKDROP_LIB MilkdropPresetFactory HINTS ../libprojectM/MilkdropPresetFactory)
-find_library(PROJECTM_NATIVE_LIB NativePresetFactory HINTS ../libprojectM/NativePresetFactory)
+
+target_link_libraries(projectM_musikcube projectM)
+target_link_libraries(projectM_musikcube Renderer)
+target_link_libraries(projectM_musikcube MilkdropPresetFactory)
+#target_link_libraries(projectM_musikcube NativePresetFactory)
 
 ADD_DEFINITIONS(-DUSE_FTGL)
 
@@ -45,10 +47,6 @@ ELSE (APPLE)
 ENDIF (APPLE)
 
 TARGET_LINK_LIBRARIES(projectM_musikcube
-    ${PROJECTM_MAIN_LIB}
-    ${PROJECTM_RENDERER_LIB}
-    ${PROJECTM_MILKDROP_LIB}
-    ${PROJECTM_NATIVE_LIB}
     ${SDL2_LIB}
 	${OPENGL_LIBRARIES}
 	${GLEW_LIB}

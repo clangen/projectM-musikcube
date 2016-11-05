@@ -24,17 +24,20 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-
-#ifdef WIN32
-#include <SDL_opengl.h>
-#define DLL_EXPORT __declspec(dllexport)
-#else
-#include <SDL2/SDL_opengl.h>
-#define DLL_EXPORT
-#endif
-
 #include <atomic>
 #include <chrono>
+#include <iostream>
+
+#ifdef WIN32
+    #include <shlwapi.h>
+    #include <SDL_opengl.h>
+    #define DLL_EXPORT __declspec(dllexport)
+#else
+    #include <SDL2/SDL_opengl.h>
+    #include <mach-o/dyld.h>
+    #include <unistd.h>
+    #define DLL_EXPORT
+#endif
 
 #include <projectM.hpp>
 
@@ -43,12 +46,9 @@
 
 #include "EventMapper.h"
 
-#ifdef WIN32
-#include <shlwapi.h>
-#endif
-
 #define MAX_FPS 30LL
 #define MILLIS_PER_FRAME (1000LL / MAX_FPS)
+#define COMPILE_AS_EXE
 
 using namespace std::chrono;
 
@@ -60,13 +60,13 @@ static std::condition_variable threadCondition;
 
 #ifdef WIN32
     static void setupDataDirectory(HMODULE module) {
-        char path[2048];
-        int length = GetModuleFileName(module, path, 2048);
-        if (length > 0 && length <= 2048) {
-            if (PathRemoveFileSpec(path)) {
-                SetProjectMDataDirectory(std::string(path));
+            char path[2048];
+            int length = GetModuleFileName(module, path, 2048);
+            if (length > 0 && length <= 2048) {
+                if (PathRemoveFileSpec(path)) {
+                    SetProjectMDataDirectory(std::string(path));
+                }
             }
-        }
     }
 
     static void compactHeaps() {
@@ -76,10 +76,22 @@ static std::condition_variable threadCondition;
             HeapCompact(heaps[i], 0);
         }
     }
-#else
-    #include <unistd.h>
+#else    
     static void Sleep(long long millis) {
         usleep(millis * 1000);
+    }
+
+    static void setupDataDirectory(void* module) {
+        std::string result;
+        char pathbuf[PATH_MAX + 1];
+        uint32_t bufsize = sizeof(pathbuf);
+        _NSGetExecutablePath(pathbuf, &bufsize);
+        char *resolved = realpath(pathbuf, NULL);
+        result.assign(resolved);
+        free(resolved);
+        size_t last = result.find_last_of("/");
+        std::cerr << result;
+        SetProjectMDataDirectory(result.substr(0, last)); /* remove filename component */
     }
 #endif
 
@@ -217,23 +229,34 @@ cleanup:
 #endif
 }
 
-#ifdef WIN32
-#if true
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
-    if (reason == DLL_PROCESS_ATTACH) {
-        setupDataDirectory(hModule);
+#ifdef COMPILE_AS_EXE
+    int main(int argc, char *argv[]) {
+        setupDataDirectory(NULL);
+
+        quit.store(false);
+        thread.store(true);
+        
+        // std::thread background(threadProc);
+        // background.detach();
+
+        // while (thread.load()) {
+        //     std::unique_lock<std::mutex> lock(threadMutex);
+        //     threadCondition.wait(lock);
+        // }
+
+        threadProc();
+
+        return 0;
     }
-    return true;
-}
 #else
-int main(int argc, char *argv[]) {
-    setupDataDirectory(NULL);
-    quit.store(false);
-    thread = (HANDLE)_beginthread(threadProc, 0, 0);
-    WaitForSingleObject(thread, INFINITE);
-    return 0;
-}
-#endif
+    #ifdef WIN32
+        BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
+            if (reason == DLL_PROCESS_ATTACH) {
+                setupDataDirectory(hModule);
+            }
+            return true;
+        }
+    #endif
 #endif
 
 class Plugin : public musik::core::IPlugin {

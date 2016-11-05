@@ -94,11 +94,6 @@ endif(APPLE)
 
 add_subdirectory(Renderer)
 
-find_package(OpenGL REQUIRED)
-find_package(Freetype REQUIRED)
-
-ADD_DEFINITIONS(-DUSE_FTGL)
-
 INCLUDE_DIRECTORIES(
 	"/usr/local/include"
 	"/usr/include/freetype2"
@@ -114,11 +109,14 @@ LINK_DIRECTORIES(
 	${PRESET_FACTORY_BINARY_DIR}
 )
 
+find_package(OpenGL REQUIRED)
+find_package(Freetype REQUIRED)
 find_library(GLEW_LIB GLEW HINTS /usr/lib /usr/local/lib)
-
 find_library(FTGL_LIB ftgl HINTS /usr/lib /usr/local/lib)
-
 find_library(FREETYPE_LIB freetype HINTS /usr/lib /usr/local/lib)
+
+add_definitions(-DUSE_FTGL)
+add_definitions(-DDISABLE_NATIVE_PRESETS)
 
 IF(APPLE)
    FIND_LIBRARY(CORE_FOUNDATION_LIBRARY CoreFoundation)
