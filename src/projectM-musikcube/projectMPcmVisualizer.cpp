@@ -25,7 +25,13 @@
 #include <mutex>
 #include <condition_variable>
 
+#ifdef WIN32
 #include <SDL_opengl.h>
+#define DLL_EXPORT __declspec(dllexport)
+#else
+#include <SDL2/SDL_opengl.h>
+#define DLL_EXPORT
+#endif
 
 #include <atomic>
 #include <chrono>
@@ -47,30 +53,34 @@
 using namespace std::chrono;
 
 static projectM* pm = nullptr;
-static std::atomic<bool> initialized = false;
-static std::atomic<bool> quit = false;
-static std::atomic<bool> thread = false;
+static std::atomic<bool> quit(false);
+static std::atomic<bool> thread(false);
 static std::mutex pcmMutex, threadMutex;
 static std::condition_variable threadCondition;
 
 #ifdef WIN32
-static void setupDataDirectory(HMODULE module) {
-    char path[2048];
-    int length = GetModuleFileName(module, path, 2048);
-    if (length > 0 && length <= 2048) {
-        if (PathRemoveFileSpec(path)) {
-            SetProjectMDataDirectory(std::string(path));
+    static void setupDataDirectory(HMODULE module) {
+        char path[2048];
+        int length = GetModuleFileName(module, path, 2048);
+        if (length > 0 && length <= 2048) {
+            if (PathRemoveFileSpec(path)) {
+                SetProjectMDataDirectory(std::string(path));
+            }
         }
     }
-}
 
-static void compactHeaps() {
-    HANDLE heaps[128];
-    int heapCount = GetProcessHeaps(128, heaps);
-    for (int i = 0; i < heapCount; i++) {
-        HeapCompact(heaps[i], 0);
+    static void compactHeaps() {
+        HANDLE heaps[128];
+        int heapCount = GetProcessHeaps(128, heaps);
+        for (int i = 0; i < heapCount; i++) {
+            HeapCompact(heaps[i], 0);
+        }
     }
-}
+#else
+    #include <unistd.h>
+    static void Sleep(long long millis) {
+        usleep(millis * 1000);
+    }
 #endif
 
 static void threadProc() {
@@ -95,7 +105,7 @@ static void threadProc() {
         goto cleanup;
     }
 
-    while (!quit) {
+    while (!quit.load()) {
         auto start = system_clock::now();
 
         if (recreate) {
@@ -139,7 +149,7 @@ static void threadProc() {
 
             if (event.type == SDL_WINDOWEVENT) {
                 if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
-                    quit = true;
+                    quit.store(true);
                     continue;
                 }
             }
@@ -159,7 +169,7 @@ static void threadProc() {
                     recreate = true;
                 }
                 else if (key == PROJECTM_K_ESCAPE) {
-                    quit = true;
+                    quit.store(true);
                     continue;
                 }
                 else {
@@ -195,7 +205,7 @@ static void threadProc() {
     SDL_DestroyWindow(screen);
 
 cleanup:
-    thread = false;
+    thread.store(false);
 
     {
         std::unique_lock<std::mutex> lock(threadMutex);
@@ -218,7 +228,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
 #else
 int main(int argc, char *argv[]) {
     setupDataDirectory(NULL);
-    quit = false;
+    quit.store(false);
     thread = (HANDLE)_beginthread(threadProc, 0, 0);
     WaitForSingleObject(thread, INFINITE);
     return 0;
@@ -250,18 +260,18 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
 
         virtual void Show() {
             if (!Visible()) {
-                quit = false;
-                thread = true;
-                std::thread thread(threadProc);
-                thread.detach();
+                quit.store(false);
+                thread.store(true);
+                std::thread background(threadProc);
+                background.detach();
             }
         }
 
         virtual void Hide() {
             if (Visible()) {
-                quit = true;
+                quit.store(true);
 
-                while (thread) {
+                while (thread.load()) {
                     std::unique_lock<std::mutex> lock(threadMutex);
                     threadCondition.wait(lock);
                 }
@@ -269,14 +279,14 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
         }
 
         virtual bool Visible() {
-            return thread;
+            return thread.load();
         }
 };
 
-extern "C" __declspec(dllexport) musik::core::IPlugin* GetPlugin() {
+extern "C" DLL_EXPORT musik::core::IPlugin* GetPlugin() {
     return new Plugin();
 }
 
-extern "C" __declspec(dllexport) musik::core::audio::IPcmVisualizer* GetPcmVisualizer() {
+extern "C" DLL_EXPORT musik::core::audio::IPcmVisualizer* GetPcmVisualizer() {
     return new Visualizer();
 }
