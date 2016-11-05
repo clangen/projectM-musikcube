@@ -199,7 +199,7 @@ token_t Parser::parseToken(std::istream &  fs, char * string)
             if (fs)
                 fs.unget();
             else
-                throw std::exception("parse failed");
+                throw std::exception();
 		}
 		return tEOL;
 	}
@@ -1735,7 +1735,7 @@ void Parser::readStringUntil(std::istream & fs, std::string * out_buffer, bool w
                             if (fs)
                                 fs.unget();
                             else
-                                throw std::exception("parse failed");
+                                throw std::exception();
 						}
 						return;
 					}
