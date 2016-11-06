@@ -28,7 +28,7 @@ namespace util {
             }
             return result;
         }
-    #else    
+    #else
         std::string getModuleDirectory(void* module) {
             std::string result;
             char pathbuf[PATH_MAX + 1];
@@ -44,7 +44,7 @@ namespace util {
 
     #ifdef WIN32
         void sleep(long long millis) {
-            Sleep(millis);
+            Sleep((DWORD) millis);
         }
     #else
         void sleep(long long millis) {

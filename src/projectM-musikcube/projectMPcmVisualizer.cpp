@@ -84,7 +84,7 @@ static std::condition_variable threadCondition;
                 std::cerr << "pipeReadProc: pipe stream opened fd=" << pipeFd << "\n";
 
                 bool pipeOpen = true;
-                
+
                 while (pipeFd > 0) {
                     int count = read(pipeFd, (void *)&samples, MAX_SAMPLES * sizeof(float));
                     if (count > 0) {
