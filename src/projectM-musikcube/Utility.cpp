@@ -6,7 +6,7 @@
 #ifdef WIN32
     #include <shlwapi.h>
 #else
-    #ifdef __APPLE_
+    #ifdef __APPLE__
         #include <mach-o/dyld.h>
     #endif
     #include <sstream>
