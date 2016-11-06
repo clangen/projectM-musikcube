@@ -34,7 +34,6 @@
     #define DLL_EXPORT __declspec(dllexport)
 #else
     #include <SDL2/SDL_opengl.h>
-    #include <mach-o/dyld.h>
     #include <unistd.h>
     #include <sys/types.h>
     #include <sys/stat.h>

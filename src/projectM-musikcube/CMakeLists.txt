@@ -4,8 +4,6 @@ cmake_minimum_required(VERSION 3.0)
 
 set(PROJECTM_MUSIKCUBE_VERSION 1.0.0)
 
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-std=c++11")
-
 set(projectM_musikcube_SOURCES 
 	Utility.cpp
 	projectMPcmVisualizer.cpp)
@@ -18,14 +16,14 @@ add_executable(projectM_musikcube ${projectM_musikcube_SOURCES})
 add_library(projectM_musikcube_plugin SHARED ${projectM_musikcube_plugin_SOURCES})
 
 include_directories(
-    "../../../musikcube/src/core/"
-    "../libprojectM"
+	"../../../musikcube/src/core/"
+	"../libprojectM"
 	"/usr/local/include"
 	${projectM_SOURCE_DIR}
 )
 
 link_directories(
-    "../libprojectM"
+	"../libprojectM"
 	"/usr/local/lib"
 )
 
@@ -44,9 +42,9 @@ target_link_libraries(projectM_musikcube MilkdropPresetFactory)
 ADD_DEFINITIONS(-DUSE_FTGL)
 
 IF(APPLE)
-   FIND_LIBRARY(CORE_FOUNDATION_LIBRARY CoreFoundation)
-   MARK_AS_ADVANCED (CORE_FOUNDATION_LIBRARY)
-   SET(FRAMEWORK_LIBS ${CORE_FOUNDATION_LIBRARY})
+	FIND_LIBRARY(CORE_FOUNDATION_LIBRARY CoreFoundation)
+	MARK_AS_ADVANCED (CORE_FOUNDATION_LIBRARY)
+	SET(FRAMEWORK_LIBS ${CORE_FOUNDATION_LIBRARY})
 ELSE (APPLE)
 	SET(FRAMEWORK_LIBS "")
 ENDIF (APPLE)
@@ -58,11 +56,12 @@ TARGET_LINK_LIBRARIES(projectM_musikcube
 	${FTGL_LIB}
 	${FREETYPE_LIB}
 	${FRAMEWORK_LIBS}    
+	pthread
 	m
 	dl
 )
 
 add_custom_command(TARGET projectM_musikcube
-    POST_BUILD
-    COMMAND "${CMAKE_SOURCE_DIR}/post_build.sh"
+	POST_BUILD
+	COMMAND "${CMAKE_SOURCE_DIR}/post_build.sh"
 	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")

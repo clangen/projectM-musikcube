@@ -6,7 +6,10 @@
 #ifdef WIN32
     #include <shlwapi.h>
 #else
-    #include <mach-o/dyld.h>
+    #ifdef __APPLE_
+        #include <mach-o/dyld.h>
+    #endif
+    #include <sstream>
     #include <unistd.h>
     #include <sys/types.h>
     #include <sys/stat.h>
@@ -30,7 +33,8 @@ namespace util {
         }
     #else
         std::string getModuleDirectory(void* module) {
-            std::string result;
+        std::string result;
+        #ifdef __APPLE__
             char pathbuf[PATH_MAX + 1];
             uint32_t bufsize = sizeof(pathbuf);
             _NSGetExecutablePath(pathbuf, &bufsize);
@@ -39,6 +43,16 @@ namespace util {
             free(resolved);
             size_t last = result.find_last_of("/");
             return result.substr(0, last); /* remove filename component */
+        #else
+            std::stringstream ss;
+            ss << "/proc/" << (int) getpid() << "/exe";
+            std::string pathToProc = ss.str();
+            char pathbuf[4096 + 1];
+            readlink(pathToProc.c_str(), pathbuf, 4096);
+            result.assign(pathbuf);
+            size_t last = result.find_last_of("/");
+            result = result.substr(0, last); /* remove filename component */
+        #endif
         }
     #endif
 

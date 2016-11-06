@@ -62,9 +62,7 @@ extern FILE *fmemopen(void *buf, size_t len, const char *pMode);
 
 
 #ifdef LINUX
-#include <cstdlib>
-#define projectM_isnan isnan
-
+#define projectM_isnan(x) ((x) != (x))
 #endif
 
 #ifdef WIN32

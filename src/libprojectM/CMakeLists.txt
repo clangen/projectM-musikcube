@@ -16,10 +16,6 @@ set(PROJECTM_ABI_LEVEL 2)
 
 ADD_DEFINITIONS(-DCMAKE_INSTALL_PREFIX="\\\"${CMAKE_INSTALL_PREFIX}\\\"")
 
-SET(LIB_INSTALL_DIR "\${exec_prefix}/lib"
-	CACHE PATH "The subdirectory relative to the install prefix where libraries will be installed (default is /lib)"
-	FORCE)
-
 SET(projectM_SOURCES 
 	projectM.cpp 
 	PCM.cpp 
@@ -141,19 +137,8 @@ TARGET_LINK_LIBRARIES(projectM
 
 SET(projectM_FONT_MENU "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/VeraMono.ttf" CACHE FILEPATH "Path to the default menu TrueType font")
 SET(projectM_FONT_TITLE "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/Vera.ttf" CACHE FILEPATH "Path to the default title TrueType font")
-ADD_DEFINITIONS(-DprojectM_FONT_MENU="\\\"${projectM_FONT_MENU}\\\"")
-ADD_DEFINITIONS(-DprojectM_FONT_TITLE="\\\"${projectM_FONT_TITLE}\\\"")
 
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/libprojectM.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/libprojectM.pc" @ONLY)
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.inp.in" "${CMAKE_CURRENT_BINARY_DIR}/config.inp" @ONLY)
-
-IF(projectM_FONT_MENU MATCHES "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/Vera.ttf" OR projectM_FONT_TITLE MATCHES "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/Vera.ttf")
-	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/fonts/VeraMono.ttf DESTINATION ${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts)
-ENDIF(projectM_FONT_MENU MATCHES "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/Vera.ttf" OR projectM_FONT_TITLE MATCHES "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/Vera.ttf")
-
-IF(projectM_FONT_MENU MATCHES "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/VeraMono.ttf" OR projectM_FONT_TITLE MATCHES "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/VeraMono.ttf")
-	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/fonts/VeraMono.ttf DESTINATION ${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts)
-ENDIF(projectM_FONT_MENU MATCHES "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/VeraMono.ttf" OR projectM_FONT_TITLE MATCHES "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/VeraMono.ttf")
 
 FILE(GLOB presets "presets/*.milk" "presets/*.prjm" "presets/*.tga")
 INSTALL(FILES ${presets} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/projectM/presets)
