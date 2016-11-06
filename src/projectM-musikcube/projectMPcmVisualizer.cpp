@@ -281,9 +281,11 @@ cleanup:
             }
 
             virtual void Write(musik::core::audio::IBuffer* buffer) {
-                if (Visible() && pm) {
+                if (Visible()) {
                     std::unique_lock<std::mutex> lock(pcmMutex);
-                    pm->pcm()->addPCMfloat(buffer->BufferPointer(), buffer->Samples());
+                    if (pm) {
+                        pm->pcm()->addPCMfloat(buffer->BufferPointer(), buffer->Samples());
+                    }
                 }
             }
 
