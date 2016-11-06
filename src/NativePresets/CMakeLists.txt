@@ -1,26 +1,9 @@
 project(NativePresets)
-cmake_minimum_required(VERSION 2.4.0)
+
+cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0005 OLD)
 
-include(FindPkgConfig.cmake)
-
-Include(cmake/CPack-projectM.cmake)
-
-if (${CMAKE_PROJECT_NAME} MATCHES "projectM-complete")
-	set(LIBPROJECTM_FOUND true)
-else(${CMAKE_PROJECT_NAME} MATCHES "projectM-complete")
-	pkg_search_module(LIBPROJECTM REQUIRED libprojectM)
-endif(${CMAKE_PROJECT_NAME} MATCHES "projectM-complete")
-
-if (LIBPROJECTM_FOUND)
-	MESSAGE(STATUS "[NativePresets] projectM detected.")
-else (LIBPROJECTM_FOUND)
-	MESSAGE(FATAL_ERROR "projectM not detected! Please install the projectM module or build from top level projectM source directory.")
-endif(LIBPROJECTM_FOUND)
-
-
 ADD_DEFINITIONS(-DLINUX -DPROJECTM_PREFIX='\"${PROJECTM_PREFIX}\"')
-
 
 if(COMMAND cmake_policy)
        cmake_policy(SET CMP0003 NEW)
@@ -34,13 +17,13 @@ ADD_LIBRARY(MstressJuppyDancer SHARED MstressJuppyDancer.cpp)
 # Doesn't build yet
 #ADD_LIBRARY(RLGFractalDrop7c SHARED RLGFractalDrop7c.cpp)
 
-if (${CMAKE_PROJECT_NAME} MATCHES "projectM-complete")
+if (${CMAKE_PROJECT_NAME} MATCHES "projectM")
    set(PROJECTM_INCLUDE ${PROJECTM_ROOT_SOURCE_DIR}/libprojectM)
    set(PROJECTM_LINK ${PROJECTM_ROOT_BINARY_DIR}/libprojectM)
 elseif (${CMAKE_PROJECT_NAME} MATCHES ${PROJECT_NAME})
    set(PROJECTM_INCLUDE ${LIBPROJECTM_INCLUDEDIR}/libprojectM)
    set(PROJECTM_LINK ${PROJECTM_LDFLAGS})
-endif (${CMAKE_PROJECT_NAME} MATCHES "projectM-complete")
+endif (${CMAKE_PROJECT_NAME} MATCHES "projectM")
 
 LINK_DIRECTORIES(${PROJECTM_LINK} ${Renderer_BINARY_DIR} ${NativePresetFactory_BINARY_DIR})
 

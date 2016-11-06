@@ -1,4 +1,4 @@
-# Install script for directory: /Users/clangen/src/projectM-musikcube/src/libprojectM/MilkdropPresetFactory
+# Install script for directory: /Users/clangen/src/projectM-musikcube/src/projectM-musikcube
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

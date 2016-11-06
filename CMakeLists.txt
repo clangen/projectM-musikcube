@@ -1,6 +1,3 @@
-PROJECT(projectM-complete)
-cmake_minimum_required(VERSION 2.8.0)
-
-include(src/cmake/CPack-projectM.cmake)
-
+PROJECT(projectM)
+cmake_minimum_required(VERSION 3.0)
 add_subdirectory(src)

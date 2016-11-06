@@ -101,8 +101,6 @@ typedef enum {
     BROWSER_INTERFACE
   } interface_t;
 
-#define CMAKE_INSTALL_PREFIX "z://projectM//"
-
 DLLEXPORT void SetProjectMDataDirectory(const std::string& directory);
 DLLEXPORT std::string GetProjectMDataDirectory();
 

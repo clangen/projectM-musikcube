@@ -24,56 +24,88 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-
-#include <SDL_opengl.h>
-
 #include <atomic>
 #include <chrono>
+#include <iostream>
+
+#ifdef WIN32
+    #include <shlwapi.h>
+    #include <SDL_opengl.h>
+    #define DLL_EXPORT __declspec(dllexport)
+#else
+    #include <SDL2/SDL_opengl.h>
+    #include <mach-o/dyld.h>
+    #include <unistd.h>
+    #include <sys/types.h>
+    #include <sys/stat.h>
+    #include <fcntl.h>
+    #include <fstream>
+    #define DLL_EXPORT
+#endif
 
 #include <projectM.hpp>
 
 #include <sdk/IPcmVisualizer.h>
 #include <sdk/IPlugin.h>
 
+#include "Utility.h"
 #include "EventMapper.h"
-
-#ifdef WIN32
-#include <shlwapi.h>
-#endif
 
 #define MAX_FPS 30LL
 #define MILLIS_PER_FRAME (1000LL / MAX_FPS)
 
+#ifndef WIN32
+#define COMPILE_AS_EXE
+#endif
+
 using namespace std::chrono;
 
 static projectM* pm = nullptr;
-static std::atomic<bool> initialized = false;
-static std::atomic<bool> quit = false;
-static std::atomic<bool> thread = false;
+static std::atomic<bool> quit(false);
+static std::atomic<bool> thread(false);
 static std::mutex pcmMutex, threadMutex;
 static std::condition_variable threadCondition;
 
-#ifdef WIN32
-static void setupDataDirectory(HMODULE module) {
-    char path[2048];
-    int length = GetModuleFileName(module, path, 2048);
-    if (length > 0 && length <= 2048) {
-        if (PathRemoveFileSpec(path)) {
-            SetProjectMDataDirectory(std::string(path));
-        }
-    }
-}
+#ifndef WIN32
+    static const int MAX_SAMPLES = 1024;
+    static const char* PCM_PIPE = "/tmp/musikcube_pcm.pipe";
 
-static void compactHeaps() {
-    HANDLE heaps[128];
-    int heapCount = GetProcessHeaps(128, heaps);
-    for (int i = 0; i < heapCount; i++) {
-        HeapCompact(heaps[i], 0);
+    static void pipeReadProc() {
+        float samples[MAX_SAMPLES];
+        int count = 0;
+
+        while (!quit.load()) {
+            mkfifo(PCM_PIPE, 0666);
+            std::cerr << "pipeReadProc: opening pipe...\n";
+            int pipeFd = open(PCM_PIPE, O_RDONLY);
+            std::cerr << "pipeReadProc: open returned\n";
+
+            if (pipeFd > 0) {
+                std::cerr << "pipeReadProc: pipe stream opened fd=" << pipeFd << "\n";
+
+                bool pipeOpen = true;
+
+                while (pipeFd > 0) {
+                    int count = read(pipeFd, (void *)&samples, MAX_SAMPLES * sizeof(float));
+                    if (count > 0) {
+                        std::unique_lock<std::mutex> lock(pcmMutex);
+                        if (pm) {
+                            pm->pcm()->addPCMfloat(samples, count / sizeof(float));
+                        }
+                    }
+                    else {
+                        close(pipeFd);
+                        pipeFd = 0;
+                    }
+                }
+            }
+        } /* while (!quit) */
+
+        std::cerr << "pipeReadProc: done\n";
     }
-}
 #endif
 
-static void threadProc() {
+static void windowProc() {
     SDL_Event event;
     SDL_GLContext glContext = nullptr;
     SDL_Window* screen = nullptr;
@@ -95,7 +127,7 @@ static void threadProc() {
         goto cleanup;
     }
 
-    while (!quit) {
+    while (!quit.load()) {
         auto start = system_clock::now();
 
         if (recreate) {
@@ -139,7 +171,7 @@ static void threadProc() {
 
             if (event.type == SDL_WINDOWEVENT) {
                 if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
-                    quit = true;
+                    quit.store(true);
                     continue;
                 }
             }
@@ -159,7 +191,7 @@ static void threadProc() {
                     recreate = true;
                 }
                 else if (key == PROJECTM_K_ESCAPE) {
-                    quit = true;
+                    quit.store(true);
                     continue;
                 }
                 else {
@@ -184,7 +216,7 @@ static void threadProc() {
         auto delta = duration_cast<milliseconds>(end - start);
         long long waitTime = MILLIS_PER_FRAME - (delta.count());
         if (waitTime > 0) {
-            Sleep(waitTime);
+            util::sleep(waitTime);
         }
     }
 
@@ -193,92 +225,96 @@ static void threadProc() {
 
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(screen);
+    SDL_Quit();
 
 cleanup:
-    thread = false;
+    thread.store(false);
 
     {
         std::unique_lock<std::mutex> lock(threadMutex);
         threadCondition.notify_all();
     }
-
-    SDL_Quit();
-
-#ifdef WIN32
-    compactHeaps();
-#endif
 }
 
-#ifdef WIN32
-#if true
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
-    if (reason == DLL_PROCESS_ATTACH) {
-        setupDataDirectory(hModule);
+#ifdef COMPILE_AS_EXE
+    int main(int argc, char *argv[]) {
+        SetProjectMDataDirectory(util::getModuleDirectory());
+
+#ifndef WIN32
+        std::thread background(pipeReadProc);
+        background.detach();
+#endif
+
+        quit.store(false);
+        thread.store(true);
+        windowProc();
+
+        return 0;
     }
-    return true;
-}
 #else
-int main(int argc, char *argv[]) {
-    setupDataDirectory(NULL);
-    quit = false;
-    thread = (HANDLE)_beginthread(threadProc, 0, 0);
-    WaitForSingleObject(thread, INFINITE);
-    return 0;
-}
-#endif
-#endif
-
-class Plugin : public musik::core::IPlugin {
-public:
-    virtual void Destroy() { delete this; };
-    virtual const char* Name() { return "projectM IPcmVisualizer"; };
-    virtual const char* Version() { return "0.1"; };
-    virtual const char* Author() { return "clangen"; };
-};
-
-class Visualizer : public musik::core::audio::IPcmVisualizer {
-    public:
-        virtual void Destroy() {
-            this->Hide();
-            delete this;
-        }
-
-        virtual void Write(musik::core::audio::IBuffer* buffer) {
-            if (Visible() && pm) {
-                std::unique_lock<std::mutex> lock(pcmMutex);
-                pm->pcm()->addPCMfloat(buffer->BufferPointer(), buffer->Samples());
+    #ifdef WIN32
+        BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
+            if (reason == DLL_PROCESS_ATTACH) {
+                SetProjectMDataDirectory(util::getModuleDirectory(hModule));
             }
+            return true;
         }
+    #endif
+#endif
 
-        virtual void Show() {
-            if (!Visible()) {
-                quit = false;
-                thread = true;
-                std::thread thread(threadProc);
-                thread.detach();
+#ifdef WIN32
+    class Plugin : public musik::core::IPlugin {
+        public:
+            virtual void Destroy() { delete this; };
+            virtual const char* Name() { return "projectM IPcmVisualizer"; };
+            virtual const char* Version() { return "0.1"; };
+            virtual const char* Author() { return "clangen"; };
+    };
+
+    class Visualizer : public musik::core::audio::IPcmVisualizer {
+        public:
+            virtual void Destroy() {
+                this->Hide();
+                delete this;
             }
-        }
 
-        virtual void Hide() {
-            if (Visible()) {
-                quit = true;
-
-                while (thread) {
-                    std::unique_lock<std::mutex> lock(threadMutex);
-                    threadCondition.wait(lock);
+            virtual void Write(musik::core::audio::IBuffer* buffer) {
+                if (Visible() && pm) {
+                    std::unique_lock<std::mutex> lock(pcmMutex);
+                    pm->pcm()->addPCMfloat(buffer->BufferPointer(), buffer->Samples());
                 }
             }
-        }
 
-        virtual bool Visible() {
-            return thread;
-        }
-};
+            virtual void Show() {
+                if (!Visible()) {
+                    quit.store(false);
+                    thread.store(true);
+                    std::thread background(windowProc);
+                    background.detach();
+                }
+            }
 
-extern "C" __declspec(dllexport) musik::core::IPlugin* GetPlugin() {
-    return new Plugin();
-}
+            virtual void Hide() {
+                if (Visible()) {
+                    quit.store(true);
 
-extern "C" __declspec(dllexport) musik::core::audio::IPcmVisualizer* GetPcmVisualizer() {
-    return new Visualizer();
-}
+                    while (thread.load()) {
+                        std::unique_lock<std::mutex> lock(threadMutex);
+                        threadCondition.wait(lock);
+                    }
+                }
+            }
+
+            virtual bool Visible() {
+                return thread.load();
+            }
+    };
+
+    extern "C" DLL_EXPORT musik::core::IPlugin* GetPlugin() {
+        return new Plugin();
+    }
+
+    extern "C" DLL_EXPORT musik::core::audio::IPcmVisualizer* GetPcmVisualizer() {
+        return new Visualizer();
+    }
+#endif

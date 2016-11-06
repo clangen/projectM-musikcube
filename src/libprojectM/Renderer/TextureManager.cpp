@@ -131,7 +131,7 @@ void TextureManager::loadTextureDir() {
 
     // Allocate a new a stream given the current directory name
     if ((m_dir = opendir(dirname.c_str())) == NULL) {
-        std::cout<<"No Textures Loaded from "<<dirname<<std::endl;
+        std::cerr<<"No Textures Loaded from "<<dirname<<std::endl;
         return; // no files loaded. m_entries is empty
     }
 

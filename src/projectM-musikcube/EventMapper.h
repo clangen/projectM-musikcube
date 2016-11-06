@@ -40,7 +40,7 @@
 #ifdef WIN32
 #include <SDL.h>
 #else
-#include <SDL/SDL.h>
+#include <SDL2/SDL.h>
 #endif
 
 projectMEvent sdl2pmEvent(SDL_Event event) {
