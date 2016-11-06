@@ -61,3 +61,8 @@ TARGET_LINK_LIBRARIES(projectM_musikcube
 	m
 	dl
 )
+
+add_custom_command(TARGET projectM_musikcube
+    POST_BUILD
+    COMMAND "${CMAKE_SOURCE_DIR}/post_build.sh"
+	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
