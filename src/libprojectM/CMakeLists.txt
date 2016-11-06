@@ -8,8 +8,6 @@ OPTION (USE_FBO "Use Framebuffer Objects for increased rendering quality.  Disab
 OPTION (USE_GLES1 "Use OpenGL ES 1.x" OFF)
 OPTION (USE_CG "Use Cg for Pixel Shader support" OFF)
 OPTION (BUILD_PROJECTM_STATIC "Build the projectM target library in the platform's native static (NOT shared) format." ON)
-OPTION (DISABLE_NATIVE_PRESETS "Turn off support for native (C++ style) presets" ON)
-OPTION (DISABLE_MILKDROP_PRESETS "Turn off support for Milkdrop (.milk / .prjm) presets"  OFF)
 
 set(PROJECTM_VERSION 2.1.0)
 set(PROJECTM_ABI_LEVEL 2)
@@ -30,21 +28,49 @@ SET(projectM_SOURCES
 	ConfigFile.cpp  
 	TimeKeeper.cpp
 	PresetFactory.cpp 
-	PresetFactoryManager.cpp)
-
-if (NOT DISABLE_NATIVE_PRESETS)
-	add_subdirectory(NativePresetFactory)
-	SET(PRESET_FACTORY_SOURCES ${PRESET_FACTORY_SOURCES} ${NativePresetFactory_SOURCE_DIR})
-	SET(PRESET_FACTORY_BINARY_DIR ${PRESET_FACTORY_BINARY_DIR} ${NativePresetFactory_BINARY_DIR})
-	SET(PRESET_FACTORY_LINK_TARGETS ${PRESET_FACTORY_LINK_TARGETS} NativePresetFactory)
-endif(NOT DISABLE_NATIVE_PRESETS)
-
-if (NOT DISABLE_MILKDROP_PRESETS)
-	add_subdirectory(MilkdropPresetFactory)
-	SET(PRESET_FACTORY_SOURCES ${PRESET_FACTORY_SOURCES} ${MilkdropPresetFactory_SOURCE_DIR})
-	SET(PRESET_FACTORY_BINARY_DIR ${PRESET_FACTORY_BINARY_DIR} ${MilkdropPrmaesetFactory_BINARY_DIR})
-	SET(PRESET_FACTORY_LINK_TARGETS ${PRESET_FACTORY_LINK_TARGETS} MilkdropPresetFactory)
-endif(NOT DISABLE_MILKDROP_PRESETS)
+	PresetFactoryManager.cpp
+	Renderer/FBO.cpp
+	Renderer/MilkdropWaveform.cpp
+	Renderer/PerPixelMesh.cpp
+	Renderer/Pipeline.cpp
+	Renderer/Renderer.cpp
+	Renderer/ShaderEngine.cpp
+	Renderer/UserTexture.cpp
+	Renderer/Waveform.cpp
+	Renderer/Filters.cpp
+	Renderer/PerlinNoise.cpp
+	Renderer/PipelineContext.cpp
+	Renderer/Renderable.cpp
+	Renderer/BeatDetect.cpp
+	Renderer/Shader.cpp
+	Renderer/TextureManager.cpp
+	Renderer/VideoEcho.cpp
+	Renderer/RenderItemDistanceMetric.cpp
+	Renderer/RenderItemMatcher.cpp
+	Renderer/SOIL/image_DXT.c
+	Renderer/SOIL/image_helper.c
+	Renderer/SOIL/SOIL.c
+	Renderer/SOIL/stb_image_aug.c
+	MilkdropPresetFactory/BuiltinFuncs.cpp
+	MilkdropPresetFactory/Func.cpp 
+	MilkdropPresetFactory/MilkdropPreset.cpp
+	MilkdropPresetFactory/Param.hpp 
+	MilkdropPresetFactory/PresetFrameIO.cpp
+	MilkdropPresetFactory/CustomShape.cpp
+	MilkdropPresetFactory/Eval.cpp
+	MilkdropPresetFactory/MilkdropPresetFactory.cpp
+	MilkdropPresetFactory/PerPixelEqn.cpp 
+	MilkdropPresetFactory/BuiltinParams.cpp
+	MilkdropPresetFactory/InitCond.cpp 
+	MilkdropPresetFactory/Parser.cpp
+	MilkdropPresetFactory/CustomWave.cpp 
+	MilkdropPresetFactory/Expr.cpp
+	MilkdropPresetFactory/PerPointEqn.cpp 
+	MilkdropPresetFactory/Param.cpp
+	MilkdropPresetFactory/PerFrameEqn.cpp
+	MilkdropPresetFactory/IdlePreset.cpp
+	#NativePresetFactory/NativePresetFactory.cpp
+)
 
 SET (projectM_SOURCES ${projectM_SOURCES})
 
@@ -88,20 +114,20 @@ else (APPLE)
 	endif(WIN32)
 endif(APPLE)
 
-add_subdirectory(Renderer)
-
 INCLUDE_DIRECTORIES(
 	"/usr/local/include"
 	"/usr/include/freetype2"
 	"/usr/local/include/freetype2"
+	"./Renderer"
+	"./Renderer/SOIL"
+	"./MilkdropPresetFactory"
+	"./NativePresetFactory"
 	${projectM_SOURCE_DIR}
-	${Renderer_SOURCE_DIR}
 	${PRESET_FACTORY_SOURCES}
 )
 
 LINK_DIRECTORIES(
 	"/usr/local/lib"
-	${Renderer_BINARY_DIR}
 	${PRESET_FACTORY_BINARY_DIR}
 )
 
@@ -123,7 +149,6 @@ ELSE (APPLE)
 ENDIF (APPLE)
 
 TARGET_LINK_LIBRARIES(projectM
-	Renderer
 	${CG_LINK_TARGETS}
 	${PRESET_FACTORY_LINK_TARGETS}
 	${OPENGL_LIBRARIES}

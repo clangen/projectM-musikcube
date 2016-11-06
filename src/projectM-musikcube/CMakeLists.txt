@@ -35,9 +35,6 @@ find_library(FREETYPE_LIB freetype HINTS /usr/lib /usr/local/lib)
 find_library(SDL2_LIB SDL2 HINTS /usr/lib /usr/local/lib)
 
 target_link_libraries(projectM_musikcube projectM)
-target_link_libraries(projectM_musikcube Renderer)
-target_link_libraries(projectM_musikcube MilkdropPresetFactory)
-#target_link_libraries(projectM_musikcube NativePresetFactory)
 
 ADD_DEFINITIONS(-DUSE_FTGL)
 
