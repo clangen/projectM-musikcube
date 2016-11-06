@@ -12,6 +12,8 @@
 **/cmake_install.cmake
 **/*.dylib
 **/*.a
+**/projectM_musikcube
+**/libprojectM_musikcube_plugin.*
 build
 src/libprojectM/libprojectM.VC.db
 src/WinLibs/freetype-2.3.5/objs

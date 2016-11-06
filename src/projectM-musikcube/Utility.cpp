@@ -51,7 +51,7 @@ namespace util {
             readlink(pathToProc.c_str(), pathbuf, 4096);
             result.assign(pathbuf);
             size_t last = result.find_last_of("/");
-            result = result.substr(0, last); /* remove filename component */
+            return result.substr(0, last); /* remove filename component */
         #endif
         }
     #endif
