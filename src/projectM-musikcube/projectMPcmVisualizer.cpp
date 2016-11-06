@@ -219,8 +219,11 @@ static void windowProc() {
         }
     }
 
-    delete pm;
-    pm = nullptr;
+    {
+        std::unique_lock<std::mutex> lock(pcmMutex);
+        delete pm;
+        pm = nullptr;
+    }
 
     SDL_GL_DeleteContext(glContext);
     SDL_DestroyWindow(screen);
