@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iostream>
 #include <signal.h>
+#include <chrono>
 
 #include <sdk/IPcmVisualizer.h>
 #include <sdk/IPlugin.h>
@@ -14,6 +15,14 @@
 #include "Utility.h"
 
 static const char* PCM_PIPE = "/tmp/musikcube_pcm.pipe";
+static const long long PID_CHECK_INTERVAL_MILLIS = 2000;
+
+using namespace std::chrono;
+
+static int64 now() {
+    return duration_cast<milliseconds>(
+        system_clock::now().time_since_epoch()).count();
+}
 
 class Plugin : public musik::core::IPlugin {
     public:
@@ -27,12 +36,14 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
     private:
         int pipeFd;
         pid_t pid;
+        long long lastPidCheck;
 
     public:
         Visualizer() {
             mkfifo(PCM_PIPE, 0666);
             pipeFd = 0;
             pid = 0;
+            lastPidCheck = now();
         }
 
         virtual ~Visualizer() {
@@ -89,6 +100,15 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
         }
 
         virtual bool Visible() {
+            long long t = now();
+            if (pid != 0 && t - lastPidCheck > PID_CHECK_INTERVAL_MILLIS) {
+                int status;
+                if (waitpid(pid, &status, WNOHANG) != 0) {
+                    pid = 0;
+                }
+                lastPidCheck = t;
+            }
+
             return this->pid != 0;
         }
 };

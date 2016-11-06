@@ -74,9 +74,6 @@ static std::condition_variable threadCondition;
         float samples[MAX_SAMPLES];
         int count = 0;
 
-        long long zeros = 0;
-        long long total = 0;
-
         while (!quit.load()) {
             mkfifo(PCM_PIPE, 0666);
             std::cerr << "pipeReadProc: opening pipe...\n";
@@ -90,11 +87,9 @@ static std::condition_variable threadCondition;
                 
                 while (pipeFd > 0) {
                     int count = read(pipeFd, (void *)&samples, MAX_SAMPLES * sizeof(float));
-                    // std::cerr << "count=" << count << "\n";
                     if (count > 0) {
                         std::unique_lock<std::mutex> lock(pcmMutex);
                         if (pm) {
-                            // std::cerr << "samples=" << count / sizeof(float) << "\n";
                             pm->pcm()->addPCMfloat(samples, count / sizeof(float));
                         }
                     }
