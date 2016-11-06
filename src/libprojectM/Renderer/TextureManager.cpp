@@ -1,9 +1,11 @@
 #ifdef LINUX
 #include <GL/gl.h>
 #endif
+
 #ifdef WIN32
 #include "glew.h"
 #endif
+
 #ifdef __APPLE__
 #include <OpenGL/gl.h>
 #endif
@@ -27,19 +29,17 @@
 #include "Common.hpp"
 #include "IdleTextures.hpp"
 
-TextureManager::TextureManager(const std::string _presetURL): presetURL(_presetURL)
-{
+TextureManager::TextureManager(const std::string _presetURL)
+: presetURL(_presetURL) {
     Preload();
     loadTextureDir();
 }
 
-TextureManager::~TextureManager()
-{
+TextureManager::~TextureManager() {
     Clear();
 }
 
-void TextureManager::Preload()
-{
+void TextureManager::Preload() {
     unsigned int tex;
 
     tex = SOIL_load_OGL_texture_from_memory(
@@ -70,37 +70,31 @@ void TextureManager::Preload()
     textures["headphones.tga"]=tex;
 }
 
-void TextureManager::Clear()
-{
-    for (std::map<std::string, GLuint>::const_iterator iter = textures.begin(); iter != textures.end(); iter++)
-    {
+void TextureManager::Clear() {
+    for (std::map<std::string, GLuint>::const_iterator iter = textures.begin(); iter != textures.end(); iter++) {
         glDeleteTextures(1,&iter->second);
     }
 
     textures.clear();
 }
 
-void TextureManager::setTexture(const std::string name, const unsigned int texId, const int width, const int height)
-{
+void TextureManager::setTexture(const std::string name, const unsigned int texId, const int width, const int height) {
     textures[name] = texId;
     widths[name] = width;
     heights[name] = height;
 }
 
-GLuint TextureManager::getTexture(const std::string filename)
-{
+GLuint TextureManager::getTexture(const std::string filename) {
     std::string fullURL = presetURL + PATH_SEPARATOR + filename;
     return getTextureFullpath(filename,fullURL);
 }
 
 GLuint TextureManager::getTextureFullpath(const std::string filename, const std::string imageURL)
 {
-    if (textures.find(filename)!= textures.end())
-    {
+    if (textures.find(filename)!= textures.end()) {
         return textures[filename];
     }
-    else
-    {
+    else {
         int width, height;
 
         unsigned int tex = SOIL_load_OGL_texture_size(
@@ -118,38 +112,32 @@ GLuint TextureManager::getTextureFullpath(const std::string filename, const std:
      }
 }
 
-int TextureManager::getTextureWidth(const std::string imageURL)
-{
+int TextureManager::getTextureWidth(const std::string imageURL) {
     return widths[imageURL];
 }
 
-int TextureManager::getTextureHeight(const std::string imageURL)
-{
+int TextureManager::getTextureHeight(const std::string imageURL) {
     return heights[imageURL];
 }
 
-unsigned int TextureManager::getTextureMemorySize()
-{
+unsigned int TextureManager::getTextureMemorySize() {
     return 0;
 }
 
-void TextureManager::loadTextureDir()
-{
+void TextureManager::loadTextureDir() {
     std::string dirname = GetProjectMDataDirectory() + "/textures";
 
     DIR * m_dir;
 
     // Allocate a new a stream given the current directory name
-    if ((m_dir = opendir(dirname.c_str())) == NULL)
-    {
+    if ((m_dir = opendir(dirname.c_str())) == NULL) {
         std::cout<<"No Textures Loaded from "<<dirname<<std::endl;
         return; // no files loaded. m_entries is empty
     }
 
     struct dirent * dir_entry;
 
-    while ((dir_entry = readdir(m_dir)) != NULL)
-    {
+    while ((dir_entry = readdir(m_dir)) != NULL) {
         // Convert char * to friendly string
         std::string filename(dir_entry->d_name);
 
@@ -170,17 +158,14 @@ void TextureManager::loadTextureDir()
         }
     }
 
-    if (m_dir)
-    {
+    if (m_dir) {
         closedir(m_dir);
         m_dir = 0;
     }
 }
 
-std::string TextureManager::getRandomTextureName(std::string random_id)
-{
-    if (user_texture_names.size() > 0)
-    {
+std::string TextureManager::getRandomTextureName(std::string random_id) {
+    if (user_texture_names.size() > 0) {
         std::string random_name = user_texture_names[rand() % user_texture_names.size()];
         random_textures.push_back(random_id);
         textures[random_id] = textures[random_name];
@@ -190,10 +175,8 @@ std::string TextureManager::getRandomTextureName(std::string random_id)
     return "";
 }
 
-void TextureManager::clearRandomTextures()
-{
-    for (std::vector<std::string>::iterator pos = random_textures.begin(); pos != random_textures.end(); ++pos)
-    {
+void TextureManager::clearRandomTextures() {
+    for (std::vector<std::string>::iterator pos = random_textures.begin(); pos != random_textures.end(); ++pos) {
         textures.erase(*pos);
         widths.erase(*pos);
         heights.erase(*pos);

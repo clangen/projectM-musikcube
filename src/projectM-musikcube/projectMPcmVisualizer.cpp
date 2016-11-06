@@ -202,6 +202,8 @@ cleanup:
         threadCondition.notify_all();
     }
 
+    SDL_Quit();
+
 #ifdef WIN32
     compactHeaps();
 #endif
