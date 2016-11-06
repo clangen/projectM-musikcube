@@ -80,7 +80,7 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
                         util::getModuleDirectory(NULL) + 
                         "/plugins/projectM_musikcube";
 
-                    execl(command.c_str(), command.c_str());
+                    execl(command.c_str(), command.c_str(), "", NULL);
                     exit(-1);
                 }
                 else {
