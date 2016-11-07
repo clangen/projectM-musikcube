@@ -45,7 +45,7 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
         }
 
         virtual const char* Name() {
-            return "projectM IPcmVisualizer";
+            return "projectM";
         };
 
         virtual const char* Version() {
