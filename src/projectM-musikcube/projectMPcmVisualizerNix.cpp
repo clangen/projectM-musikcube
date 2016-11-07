@@ -25,14 +25,6 @@ static int64 now() {
         system_clock::now().time_since_epoch()).count();
 }
 
-class Plugin : public musik::core::IPlugin {
-    public:
-        virtual void Destroy() { delete this; };
-        virtual const char* Name() { return "projectM IPcmVisualizer"; };
-        virtual const char* Version() { return "0.1"; };
-        virtual const char* Author() { return "clangen"; };
-};
-
 class Visualizer : public musik::core::audio::IPcmVisualizer {
     private:
         int pipeFd;
@@ -51,6 +43,18 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
             close(pipeFd);
             unlink(PCM_PIPE);
         }
+
+        virtual const char* Name() {
+            return "projectM IPcmVisualizer";
+        };
+
+        virtual const char* Version() {
+            return "0.1";
+        };
+        
+        virtual const char* Author() {
+            return "clangen";
+        };
 
         virtual void Destroy() {
             this->Hide();
@@ -115,7 +119,7 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
 };
 
 extern "C" musik::core::IPlugin* GetPlugin() {
-    return new Plugin();
+    return new Visualizer();
 }
 
 extern "C" musik::core::audio::IPcmVisualizer* GetPcmVisualizer() {

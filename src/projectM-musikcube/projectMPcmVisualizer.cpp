@@ -265,16 +265,20 @@ cleanup:
 #endif
 
 #ifdef WIN32
-    class Plugin : public musik::core::IPlugin {
-        public:
-            virtual void Destroy() { delete this; };
-            virtual const char* Name() { return "projectM IPcmVisualizer"; };
-            virtual const char* Version() { return "0.1"; };
-            virtual const char* Author() { return "clangen"; };
-    };
-
     class Visualizer : public musik::core::audio::IPcmVisualizer {
         public:
+            virtual const char* Name() {
+                return "projectM IPcmVisualizer";
+            };
+
+            virtual const char* Version() {
+                return "0.1";
+            };
+
+            virtual const char* Author() {
+                return "clangen";
+            };
+
             virtual void Destroy() {
                 this->Hide();
                 delete this;
@@ -315,7 +319,7 @@ cleanup:
     };
 
     extern "C" DLL_EXPORT musik::core::IPlugin* GetPlugin() {
-        return new Plugin();
+        return new Visualizer();
     }
 
     extern "C" DLL_EXPORT musik::core::audio::IPcmVisualizer* GetPcmVisualizer() {
