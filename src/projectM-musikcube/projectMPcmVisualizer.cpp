@@ -268,7 +268,7 @@ cleanup:
     class Visualizer : public musik::core::audio::IPcmVisualizer {
         public:
             virtual const char* Name() {
-                return "projectM IPcmVisualizer";
+                return "projectM";
             };
 
             virtual const char* Version() {
