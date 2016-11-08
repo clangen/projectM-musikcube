@@ -10,8 +10,8 @@
 #include <signal.h>
 #include <chrono>
 
-#include <sdk/IPcmVisualizer.h>
-#include <sdk/IPlugin.h>
+#include <core/sdk/IPcmVisualizer.h>
+#include <core/sdk/IPlugin.h>
 
 #include "Utility.h"
 
@@ -49,7 +49,7 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
         };
 
         virtual const char* Version() {
-            return "0.1";
+            return "0.1.1";
         };
         
         virtual const char* Author() {

@@ -16,7 +16,10 @@ add_executable(projectM_musikcube ${projectM_musikcube_SOURCES})
 add_library(projectM_musikcube_plugin SHARED ${projectM_musikcube_plugin_SOURCES})
 
 include_directories(
-	"../../../musikcube/src/core/"
+	"../../../musikcube/src"
+	"${CMAKE_INSTALL_PREFIX}/musikcube"
+	"/usr/include/musikcube"
+	"/usr/local/include/musikcube"
 	"../libprojectM"
 	"/usr/local/include"
 	${projectM_SOURCE_DIR}

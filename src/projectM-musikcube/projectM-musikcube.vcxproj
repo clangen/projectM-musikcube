@@ -68,7 +68,7 @@
       <Optimization>MaxSpeed</Optimization>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>.\;..\;..\libprojectM;..\WinLibs\SDL2-2.0.5\include;..\..\..\musikcube\src\core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\libprojectM;..\WinLibs\SDL2-2.0.5\include;..\..\..\musikcube\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Release\projectMvis.pch</PrecompiledHeaderOutputFile>
@@ -122,7 +122,7 @@ xcopy $(SolutionDir)src\libprojectM\config.inp $(SolutionDir)..\musikcube\bin\re
       <WarningLevel>Level3</WarningLevel>
       <MinimalRebuild>true</MinimalRebuild>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <AdditionalIncludeDirectories>.\;..\;..\libprojectM;..\WinLibs\SDL2-2.0.5\include;..\..\..\musikcube\src\core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\libprojectM;..\WinLibs\SDL2-2.0.5\include;..\..\..\musikcube\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Debug\projectMvis.pch</PrecompiledHeaderOutputFile>

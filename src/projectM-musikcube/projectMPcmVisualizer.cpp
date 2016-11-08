@@ -44,8 +44,8 @@
 
 #include <projectM.hpp>
 
-#include <sdk/IPcmVisualizer.h>
-#include <sdk/IPlugin.h>
+#include <core/sdk/IPcmVisualizer.h>
+#include <core/sdk/IPlugin.h>
 
 #include "Utility.h"
 #include "EventMapper.h"
@@ -272,7 +272,7 @@ cleanup:
             };
 
             virtual const char* Version() {
-                return "0.1";
+                return "0.1.1";
             };
 
             virtual const char* Author() {
