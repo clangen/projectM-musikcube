@@ -15,6 +15,7 @@
 **/projectM_musikcube
 **/libprojectM_musikcube_plugin.*
 build
+install_manifest.txt
 src/libprojectM/libprojectM.VC.db
 src/WinLibs/freetype-2.3.5/objs
 src/WinLibs/freetype-2.3.5/builds/win32/visualc/freetype.VC.db

@@ -162,12 +162,4 @@ TARGET_LINK_LIBRARIES(projectM
 
 SET(projectM_FONT_MENU "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/VeraMono.ttf" CACHE FILEPATH "Path to the default menu TrueType font")
 SET(projectM_FONT_TITLE "${CMAKE_INSTALL_PREFIX}/${RESOURCE_PREFIX}/fonts/Vera.ttf" CACHE FILEPATH "Path to the default title TrueType font")
-
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/config.inp.in" "${CMAKE_CURRENT_BINARY_DIR}/config.inp" @ONLY)
-
-FILE(GLOB presets "presets/*.milk" "presets/*.prjm" "presets/*.tga")
-INSTALL(FILES ${presets} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/projectM/presets)
-INSTALL(FILES ${Renderer_SOURCE_DIR}/projectM.cg ${Renderer_SOURCE_DIR}/blur.cg DESTINATION ${CMAKE_INSTALL_PREFIX}/share/projectM/shaders)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/config.inp DESTINATION ${CMAKE_INSTALL_PREFIX}/share/projectM)
-INSTALL(FILES projectM.hpp event.h dlldefs.h fatal.h PCM.hpp Common.hpp DESTINATION include/libprojectM)
-INSTALL(TARGETS projectM DESTINATION lib)
