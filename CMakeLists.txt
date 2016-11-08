@@ -23,6 +23,7 @@ install(
 
 install(
     FILES src/projectM-musikcube/projectM_musikcube
+    PERMISSIONS OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE
     DESTINATION share/musikcube/plugins
 )
 
