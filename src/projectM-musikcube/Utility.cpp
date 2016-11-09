@@ -35,12 +35,10 @@ namespace util {
         std::string getModuleDirectory(void* module) {
         std::string result;
         #ifdef __APPLE__
-            char pathbuf[PATH_MAX + 1];
+            char pathbuf[4096 + 1];
             uint32_t bufsize = sizeof(pathbuf);
             _NSGetExecutablePath(pathbuf, &bufsize);
-            char *resolved = realpath(pathbuf, NULL);
-            result.assign(resolved);
-            free(resolved);
+            result.assign(pathbuf);
             size_t last = result.find_last_of("/");
             return result.substr(0, last); /* remove filename component */
         #else
