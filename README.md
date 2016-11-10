@@ -8,7 +8,7 @@ at a high level, this repository contains the following:
 2. CMake build files for libprojectM 2.1.0 that work on the latest macOS and Linux (Ubuntu 16.04-16.10)
 3. removal of many older libraries and plugins that are no longer building
 4. a plugin for the musikcube project (Win32/macOS/Linux) implemented using SDL2
-5. fixes for a handful of nasty memory leaks (a couple small ones still seem to exist in the preset parser)
+5. fixes for a handful of nasty memory leaks
 6. fixes for a handful of random crashes
 
 todo: build instructions
