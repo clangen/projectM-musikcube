@@ -140,7 +140,6 @@
     <ClInclude Include="HungarianMethod.hpp" />
     <ClInclude Include="IdleTextures.hpp" />
     <ClInclude Include="KeyHandler.hpp" />
-    <ClInclude Include="lvtoprojectM.h" />
     <ClInclude Include="MilkdropPresetFactory\BuiltinFuncs.hpp" />
     <ClInclude Include="MilkdropPresetFactory\BuiltinParams.hpp" />
     <ClInclude Include="MilkdropPresetFactory\CustomShape.hpp" />
@@ -208,7 +207,6 @@
     <ClInclude Include="Renderer\VideoEcho.hpp" />
     <ClInclude Include="Renderer\Waveform.hpp" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="sdltoprojectM.h" />
     <ClInclude Include="TimeKeeper.hpp" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="win32-dirent.h" />

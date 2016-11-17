@@ -49,9 +49,9 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
         };
 
         virtual const char* Version() {
-            return "0.1.2";
+            return "0.2.0";
         };
-        
+
         virtual const char* Author() {
             return "clangen";
         };
@@ -80,8 +80,8 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
             if (!Visible()) {
                 pid_t pid;
                 if ((pid = fork()) == 0) {
-                    const std::string command = 
-                        util::getModuleDirectory(NULL) + 
+                    const std::string command =
+                        util::getModuleDirectory(NULL) +
                         "/plugins/projectM_musikcube";
 
                     execl(command.c_str(), command.c_str(), "", NULL);

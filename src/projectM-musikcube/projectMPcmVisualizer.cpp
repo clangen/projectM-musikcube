@@ -62,7 +62,7 @@ using namespace std::chrono;
 static projectM* pm = nullptr;
 static std::atomic<bool> quit(false);
 static std::atomic<bool> thread(false);
-static std::mutex pcmMutex, threadMutex;
+static std::mutex pmMutex, threadMutex;
 static std::condition_variable threadCondition;
 
 #ifndef WIN32
@@ -204,10 +204,7 @@ static void windowProc() {
             }
         }
 
-        {
-            std::unique_lock<std::mutex> lock(pcmMutex);
-            pm->renderFrame();
-        }
+        pm->renderFrame();
 
         SDL_GL_SwapWindow(screen);
 
@@ -220,7 +217,7 @@ static void windowProc() {
     }
 
     {
-        std::unique_lock<std::mutex> lock(pcmMutex);
+        std::unique_lock<std::mutex> lock(pmMutex);
         delete pm;
         pm = nullptr;
     }
@@ -272,7 +269,7 @@ cleanup:
             };
 
             virtual const char* Version() {
-                return "0.1.2";
+                return "0.2.0";
             };
 
             virtual const char* Author() {
@@ -286,7 +283,7 @@ cleanup:
 
             virtual void Write(musik::core::audio::IBuffer* buffer) {
                 if (Visible()) {
-                    std::unique_lock<std::mutex> lock(pcmMutex);
+                    std::unique_lock<std::mutex> lock(pmMutex);
                     if (pm) {
                         pm->pcm()->addPCMfloat(buffer->BufferPointer(), buffer->Samples());
                     }
