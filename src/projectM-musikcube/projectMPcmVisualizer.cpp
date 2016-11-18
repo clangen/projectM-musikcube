@@ -87,7 +87,7 @@ static std::condition_variable threadCondition;
                 while (pipeFd > 0) {
                     int count = read(pipeFd, (void *)&samples, MAX_SAMPLES * sizeof(float));
                     if (count > 0) {
-                        std::unique_lock<std::mutex> lock(pcmMutex);
+                        std::unique_lock<std::mutex> lock(pmMutex);
                         if (pm) {
                             pm->pcm()->addPCMfloat(samples, count / sizeof(float));
                         }
