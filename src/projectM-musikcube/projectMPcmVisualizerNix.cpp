@@ -25,7 +25,7 @@ static int64 now() {
         system_clock::now().time_since_epoch()).count();
 }
 
-class Visualizer : public musik::core::audio::IPcmVisualizer {
+class Visualizer : public musik::core::sdk::IPcmVisualizer {
     private:
         int pipeFd;
         pid_t pid;
@@ -61,7 +61,7 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
             delete this;
         }
 
-        virtual void Write(musik::core::audio::IBuffer* buffer) {
+        virtual void Write(musik::core::sdk::IBuffer* buffer) {
             if (pid) {
                 if (pipeFd <= 0) {
                     pipeFd = open(PCM_PIPE, O_WRONLY | O_NONBLOCK);
@@ -118,10 +118,10 @@ class Visualizer : public musik::core::audio::IPcmVisualizer {
         }
 };
 
-extern "C" musik::core::IPlugin* GetPlugin() {
+extern "C" musik::core::sdk::IPlugin* GetPlugin() {
     return new Visualizer();
 }
 
-extern "C" musik::core::audio::IPcmVisualizer* GetPcmVisualizer() {
+extern "C" musik::core::sdk::IPcmVisualizer* GetPcmVisualizer() {
     return new Visualizer();
 }

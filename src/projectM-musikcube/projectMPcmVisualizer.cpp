@@ -262,7 +262,7 @@ cleanup:
 #endif
 
 #ifdef WIN32
-    class Visualizer : public musik::core::audio::IPcmVisualizer {
+    class Visualizer : public musik::core::sdk::IPcmVisualizer {
         public:
             virtual const char* Name() {
                 return "projectM";
@@ -281,7 +281,7 @@ cleanup:
                 delete this;
             }
 
-            virtual void Write(musik::core::audio::IBuffer* buffer) {
+            virtual void Write(musik::core::sdk::IBuffer* buffer) {
                 if (Visible()) {
                     std::unique_lock<std::mutex> lock(pmMutex);
                     if (pm) {
@@ -315,11 +315,11 @@ cleanup:
             }
     };
 
-    extern "C" DLL_EXPORT musik::core::IPlugin* GetPlugin() {
+    extern "C" DLL_EXPORT musik::core::sdk::IPlugin* GetPlugin() {
         return new Visualizer();
     }
 
-    extern "C" DLL_EXPORT musik::core::audio::IPcmVisualizer* GetPcmVisualizer() {
+    extern "C" DLL_EXPORT musik::core::sdk::IPcmVisualizer* GetPcmVisualizer() {
         return new Visualizer();
     }
 #endif
