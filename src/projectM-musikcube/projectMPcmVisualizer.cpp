@@ -269,7 +269,7 @@ cleanup:
             };
 
             virtual const char* Version() {
-                return "0.2.0";
+                return "0.2.1";
             };
 
             virtual const char* Author() {

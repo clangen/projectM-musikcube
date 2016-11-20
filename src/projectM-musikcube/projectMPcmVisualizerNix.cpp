@@ -49,7 +49,7 @@ class Visualizer : public musik::core::sdk::IPcmVisualizer {
         };
 
         virtual const char* Version() {
-            return "0.2.0";
+            return "0.2.1";
         };
 
         virtual const char* Author() {
