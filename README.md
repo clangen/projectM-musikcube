@@ -4,7 +4,7 @@ the projectM sources haven't been updated since 2012 and have started to bit rot
 
 at a high level, this repository contains the following:
 
-1. Visual Studio 2015 build files for libprojectM 2.1.0
+1. Visual Studio 2017 build files for libprojectM 2.1.0
 2. CMake build files for libprojectM 2.1.0 that work on the latest macOS and Linux (Ubuntu 16.04-16.10)
 3. removal of many older libraries and plugins that are no longer building
 4. a plugin for the musikcube project (Win32/macOS/Linux) implemented using SDL2
