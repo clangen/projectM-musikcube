@@ -96,6 +96,7 @@
       <OutputFile>$(SolutionDir)bin\release\projectM-musikcube.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)bin\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>LIBCMT.LIB;version.lib;winmm.lib;Imm32.lib;shlwapi.lib;opengl32.lib;glu32.lib;libprojectM.lib;sdl2.lib;sdl2main.lib;ftgl_static_lib.lib;freetype.lib;glew_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
       <Command>xcopy $(TargetPath) $(SolutionDir)..\musikcube\bin\release\plugins\ /Y
