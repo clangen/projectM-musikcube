@@ -21,7 +21,7 @@ static const long long PID_CHECK_INTERVAL_MILLIS = 2000;
 
 using namespace std::chrono;
 
-static int64 now() {
+static long long now() {
     return duration_cast<milliseconds>(
         system_clock::now().time_since_epoch()).count();
 }
@@ -121,7 +121,7 @@ class Visualizer : public musik::core::sdk::IPcmVisualizer {
 };
 
 extern "C" musik::core::sdk::IPlugin* GetPlugin() {
-    return new Visualizer();
+    return new VisualizerPlugin();
 }
 
 extern "C" musik::core::sdk::IPcmVisualizer* GetPcmVisualizer() {
