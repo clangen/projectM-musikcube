@@ -30,7 +30,7 @@ class VisualizerPlugin : public musik::core::sdk::IPlugin {
     public:
         virtual void Destroy() { delete this; }
         virtual const char* Name() { return "projectM IPcmVisualizer"; }
-        virtual const char* Version() { return "0.2.1"; }
+        virtual const char* Version() { return "0.3.0"; }
         virtual const char* Author() { return "clangen"; }
         virtual int SdkVersion() { return musik::core::sdk::SdkVersion; }
 };
