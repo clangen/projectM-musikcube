@@ -44,6 +44,7 @@
 
 #include <projectM.hpp>
 
+#include <core/sdk/constants.h>
 #include <core/sdk/IPcmVisualizer.h>
 #include <core/sdk/IPlugin.h>
 
@@ -262,19 +263,20 @@ cleanup:
 #endif
 
 #ifdef WIN32
+    class VisualizerPlugin : public musik::core::sdk::IPlugin {
+        public:
+            virtual void Destroy() { delete this; }
+            virtual const char* Name() { return "projectM IPcmVisualizer"; }
+            virtual const char* Version() { return "0.2.1"; }
+            virtual const char* Author() { return "clangen"; }
+            virtual int SdkVersion() { return musik::core::sdk::SdkVersion; }
+    };
+
     class Visualizer : public musik::core::sdk::IPcmVisualizer {
         public:
             virtual const char* Name() {
                 return "projectM";
-            };
-
-            virtual const char* Version() {
-                return "0.2.1";
-            };
-
-            virtual const char* Author() {
-                return "clangen";
-            };
+            }
 
             virtual void Destroy() {
                 this->Hide();
@@ -316,7 +318,7 @@ cleanup:
     };
 
     extern "C" DLL_EXPORT musik::core::sdk::IPlugin* GetPlugin() {
-        return new Visualizer();
+        return new VisualizerPlugin();
     }
 
     extern "C" DLL_EXPORT musik::core::sdk::IPcmVisualizer* GetPcmVisualizer() {

@@ -10,6 +10,7 @@
 #include <signal.h>
 #include <chrono>
 
+#include <core/sdk/constants.h>
 #include <core/sdk/IPcmVisualizer.h>
 #include <core/sdk/IPlugin.h>
 
@@ -24,6 +25,15 @@ static int64 now() {
     return duration_cast<milliseconds>(
         system_clock::now().time_since_epoch()).count();
 }
+
+class VisualizerPlugin : public musik::core::sdk::IPlugin {
+    public:
+        virtual void Destroy() { delete this; }
+        virtual const char* Name() { return "projectM IPcmVisualizer"; }
+        virtual const char* Version() { return "0.2.1"; }
+        virtual const char* Author() { return "clangen"; }
+        virtual int SdkVersion() { return musik::core::sdk::SdkVersion; }
+};
 
 class Visualizer : public musik::core::sdk::IPcmVisualizer {
     private:
@@ -46,15 +56,7 @@ class Visualizer : public musik::core::sdk::IPcmVisualizer {
 
         virtual const char* Name() {
             return "projectM";
-        };
-
-        virtual const char* Version() {
-            return "0.2.1";
-        };
-
-        virtual const char* Author() {
-            return "clangen";
-        };
+        }
 
         virtual void Destroy() {
             this->Hide();
