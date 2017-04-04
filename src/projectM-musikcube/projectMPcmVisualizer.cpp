@@ -267,7 +267,7 @@ cleanup:
         public:
             virtual void Destroy() { delete this; }
             virtual const char* Name() { return "projectM IPcmVisualizer"; }
-            virtual const char* Version() { return "0.4.1"; }
+            virtual const char* Version() { return "0.4.2"; }
             virtual const char* Author() { return "clangen"; }
             virtual int SdkVersion() { return musik::core::sdk::SdkVersion; }
     };
