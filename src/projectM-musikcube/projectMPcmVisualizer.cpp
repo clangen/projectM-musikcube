@@ -267,7 +267,7 @@ cleanup:
         public:
             virtual void Destroy() { delete this; }
             virtual const char* Name() { return "projectM IPcmVisualizer"; }
-            virtual const char* Version() { return "0.4.6"; }
+            virtual const char* Version() { return "0.4.7"; }
             virtual const char* Author() { return "clangen"; }
             virtual const char* Guid() { return "1e4b1884-65dd-4010-84a5-7c0f5732f343"; }
             virtual bool Configurable() { return false; }
