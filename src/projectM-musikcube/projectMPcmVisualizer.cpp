@@ -265,29 +265,29 @@ cleanup:
 #ifdef WIN32
     class VisualizerPlugin : public musik::core::sdk::IPlugin {
         public:
-            virtual void Destroy() { delete this; }
-            virtual const char* Name() { return "projectM IPcmVisualizer"; }
-            virtual const char* Version() { return "0.5.0"; }
-            virtual const char* Author() { return "clangen"; }
-            virtual const char* Guid() { return "1e4b1884-65dd-4010-84a5-7c0f5732f343"; }
-            virtual bool Configurable() { return false; }
-            virtual void Configure() { }
-            virtual void Reload() { }
-            virtual int SdkVersion() { return musik::core::sdk::SdkVersion; }
+            virtual void Release() override { delete this; }
+            virtual const char* Name() override { return "projectM IPcmVisualizer"; }
+            virtual const char* Version() override { return "0.5.1"; }
+            virtual const char* Author() override { return "clangen"; }
+            virtual const char* Guid() override { return "1e4b1884-65dd-4010-84a5-7c0f5732f343"; }
+            virtual bool Configurable() override { return false; }
+            virtual void Configure() override { }
+            virtual void Reload() override { }
+            virtual int SdkVersion() override { return musik::core::sdk::SdkVersion; }
     };
 
     class Visualizer : public musik::core::sdk::IPcmVisualizer {
         public:
-            virtual const char* Name() {
+            virtual const char* Name() override {
                 return "projectM";
             }
 
-            virtual void Destroy() {
+            virtual void Release() override {
                 this->Hide();
                 delete this;
             }
 
-            virtual void Write(musik::core::sdk::IBuffer* buffer) {
+            virtual void Write(musik::core::sdk::IBuffer* buffer) override {
                 if (Visible()) {
                     std::unique_lock<std::mutex> lock(pmMutex);
                     if (pm) {
@@ -296,7 +296,7 @@ cleanup:
                 }
             }
 
-            virtual void Show() {
+            virtual void Show() override {
                 if (!Visible()) {
                     quit.store(false);
                     thread.store(true);
@@ -305,7 +305,7 @@ cleanup:
                 }
             }
 
-            virtual void Hide() {
+            virtual void Hide() override {
                 if (Visible()) {
                     quit.store(true);
 
@@ -316,7 +316,7 @@ cleanup:
                 }
             }
 
-            virtual bool Visible() {
+            virtual bool Visible() override {
                 return thread.load();
             }
     };
