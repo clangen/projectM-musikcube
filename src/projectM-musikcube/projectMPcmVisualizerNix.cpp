@@ -30,7 +30,7 @@ class VisualizerPlugin : public musik::core::sdk::IPlugin {
     public:
         virtual void Release() override { delete this; }
         virtual const char* Name() override { return "projectM IPcmVisualizer"; }
-        virtual const char* Version() override { return "0.5.1"; }
+        virtual const char* Version() override { return "0.5.2"; }
         virtual const char* Author() override { return "clangen"; }
         virtual const char* Guid() override { return "1e4b1884-65dd-4010-84a5-7c0f5732f343"; }
         virtual bool Configurable() override { return false; }
