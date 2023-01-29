@@ -65,6 +65,30 @@ static std::atomic<bool> thread(false);
 static std::mutex pmMutex, threadMutex;
 static std::condition_variable threadCondition;
 
+static void nextValidPreset() {
+    while (1) {
+        try {
+            projectm_playlist_play_next(projectMPlaylist, true);
+            break;
+        }
+        catch (...) {
+            /* preset parse threw, can't do anything... */
+        }
+    }
+}
+
+static void prevValidPreset() {
+    while (1) {
+        try {
+            projectm_playlist_play_previous(projectMPlaylist, true);
+            break;
+        }
+        catch (...) {
+            /* preset parse threw, can't do anything... */
+        }
+    }
+}
+
 static void windowProc() {
     SDL_Event event;
     SDL_GLContext glContext = nullptr;
@@ -121,7 +145,7 @@ static void windowProc() {
             projectm_set_fps(projectM, MAX_FPS);
             projectm_set_mesh_size(projectM, 220, 125);
             projectm_set_aspect_correction(projectM, true);
-            projectm_set_preset_duration(projectM, 5);
+            projectm_set_preset_duration(projectM, 30);
             projectm_set_soft_cut_duration(projectM, 3);
             projectm_set_hard_cut_enabled(projectM, false);
             projectm_set_hard_cut_duration(projectM, 20);
@@ -139,17 +163,6 @@ static void windowProc() {
         }
 
         while (SDL_PollEvent(&event)) {
-            //evt = sdl2pmEvent(event);
-            //key = sdl2pmKeycode(event.key.keysym.sym);
-            //mod = sdl2pmModifier(event.key.keysym.mod);
-
-            //if (event.type == SDL_WINDOWEVENT) {
-            //    if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
-            //        quit.store(true);
-            //        continue;
-            //    }
-            //}
-
             //if (evt == PROJECTM_KEYDOWN) {
             //    if (event.key.keysym.sym == SDLK_SPACE) {
             //        /* hack: spacebar locks. */
@@ -164,15 +177,43 @@ static void windowProc() {
             //        fullscreen = !fullscreen;
             //        recreate = true;
             //    }
-            //    else if (key == PROJECTM_K_ESCAPE) {
-            //        quit.store(true);
-            //        continue;
-            //    }
-            //    else {
-            //        pm->key_handler(evt, key, mod);
-            //    }
-            //}
+
+             //}
             if (event.type == SDL_WINDOWEVENT) {
+                if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
+                    quit.store(true);
+                    continue;
+                }
+            }
+            else if (event.type == SDL_KEYDOWN) {
+                /* https://github.com/clangen/projectM-musikcube/blob/447b5908b5f87b52dab36124bcf4f95f6fbbb17e/src/libprojectM/KeyHandler.cpp#L113 */
+                auto const key = event.key.keysym.scancode;
+                if (key == SDL_SCANCODE_UP) {
+                    auto const current = projectm_get_beat_sensitivity(projectM);
+                    projectm_set_beat_sensitivity(projectM, current + 0.2f);
+                }
+                else if (key == SDL_SCANCODE_DOWN) {
+                    auto const current = projectm_get_beat_sensitivity(projectM);
+                    projectm_set_beat_sensitivity(projectM, current - 0.2f);
+                }
+                else if (key == SDL_SCANCODE_RIGHT) {
+                    projectm_playlist_set_shuffle(projectMPlaylist, false);
+                    nextValidPreset();
+                }
+                else if (key == SDL_SCANCODE_LEFT) {
+                    projectm_playlist_set_shuffle(projectMPlaylist, false);
+                    prevValidPreset();
+                }
+                else if (key == SDL_SCANCODE_SPACE) {
+                    projectm_playlist_set_shuffle(projectMPlaylist, true);
+                    nextValidPreset();
+                }
+                else if (key == SDL_SCANCODE_ESCAPE) {
+                    quit.store(true);
+                    continue;
+                }
+            }
+            else if (event.type == SDL_WINDOWEVENT) {
                 SDL_GetWindowSize(screen, &width, &height);
                 projectm_set_window_size(projectM, width, height);
                 projectm_reset_textures(projectM);
@@ -185,7 +226,7 @@ static void windowProc() {
         catch (...) {
             /* if the selected preset throws an exception, cut over to the next
             one immediately. */
-            projectm_playlist_play_next(projectMPlaylist, true);
+            nextValidPreset();
         }
 
         SDL_GL_SwapWindow(screen);
@@ -219,23 +260,10 @@ cleanup:
     }
 }
 
-#ifdef COMPILE_AS_EXE
-    int main(int argc, char *argv[]) {
-        //SetProjectMDataDirectory(util::getModuleDirectory());
-        quit.store(false);
-        thread.store(true);
-        windowProc();
-        return 0;
+#ifdef WIN32
+    BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
+        return true;
     }
-#else
-    #ifdef WIN32
-        BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
-            if (reason == DLL_PROCESS_ATTACH) {
-                //SetProjectMDataDirectory(util::getModuleDirectory(hModule));
-            }
-            return true;
-        }
-    #endif
 #endif
 
 #ifdef WIN32
