@@ -266,75 +266,73 @@ cleanup:
     }
 #endif
 
-#ifdef WIN32
-    class VisualizerPlugin : public musik::core::sdk::IPlugin {
-        public:
-            virtual void Release() override { delete this; }
-            virtual const char* Name() override { return "projectM IPcmVisualizer"; }
-            virtual const char* Version() override { return "0.5.2"; }
-            virtual const char* Author() override { return "clangen"; }
-            virtual const char* Guid() override { return "1e4b1884-65dd-4010-84a5-7c0f5732f343"; }
-            virtual bool Configurable() override { return false; }
-            virtual void Configure() override { }
-            virtual void Reload() override { }
-            virtual int SdkVersion() override { return musik::core::sdk::SdkVersion; }
-    };
+class VisualizerPlugin : public musik::core::sdk::IPlugin {
+    public:
+        void Release() override { delete this; }
+        const char* Name() override { return "projectM IPcmVisualizer"; }
+        const char* Version() override { return "0.5.2"; }
+        const char* Author() override { return "clangen"; }
+        const char* Guid() override { return "1e4b1884-65dd-4010-84a5-7c0f5732f343"; }
+        bool Configurable() override { return false; }
+        void Configure() override { }
+        void Reload() override { }
+        int SdkVersion() override { return musik::core::sdk::SdkVersion; }
+};
 
-    class Visualizer : public musik::core::sdk::IPcmVisualizer {
-        public:
-            virtual const char* Name() override {
-                return "projectM";
-            }
+class Visualizer : public musik::core::sdk::IPcmVisualizer {
+    public:
+        const char* Name() override {
+            return "projectM";
+        }
 
-            virtual void Release() override {
-                this->Hide();
-                delete this;
-            }
+        void Release() override {
+            this->Hide();
+            delete this;
+        }
 
-            virtual void Write(musik::core::sdk::IBuffer* buffer) override {
-                if (Visible()) {
-                    std::unique_lock<std::mutex> lock(pmMutex);
-                    if (projectM) {
-                        const auto channels = buffer->Channels();
-                        projectm_pcm_add_float(
-                            projectM,
-                            buffer->BufferPointer(),
-                            buffer->Samples() / channels,
-                            channels == 1 ? PROJECTM_MONO : PROJECTM_STEREO);
-                    }
+        void Write(musik::core::sdk::IBuffer* buffer) override {
+            if (Visible()) {
+                std::unique_lock<std::mutex> lock(pmMutex);
+                if (projectM) {
+                    const auto channels = buffer->Channels();
+                    projectm_pcm_add_float(
+                        projectM,
+                        buffer->BufferPointer(),
+                        buffer->Samples() / channels,
+                        channels == 1 ? PROJECTM_MONO : PROJECTM_STEREO);
                 }
             }
+        }
 
-            virtual void Show() override {
-                if (!Visible()) {
-                    quit.store(false);
-                    thread.store(true);
-                    std::thread background(windowProc);
-                    background.detach();
+        void Show() override {
+            if (!Visible()) {
+                quit.store(false);
+                thread.store(true);
+                std::thread background(windowProc);
+                background.detach();
+            }
+        }
+
+        void Hide() override {
+            if (Visible()) {
+                quit.store(true);
+
+                while (thread.load()) {
+                    std::unique_lock<std::mutex> lock(threadMutex);
+                    threadCondition.wait(lock);
                 }
             }
+        }
 
-            virtual void Hide() override {
-                if (Visible()) {
-                    quit.store(true);
+        bool Visible() override {
+            return thread.load();
+        }
+};
 
-                    while (thread.load()) {
-                        std::unique_lock<std::mutex> lock(threadMutex);
-                        threadCondition.wait(lock);
-                    }
-                }
-            }
+extern "C" DLL_EXPORT musik::core::sdk::IPlugin* GetPlugin() {
+    return new VisualizerPlugin();
+}
 
-            virtual bool Visible() override {
-                return thread.load();
-            }
-    };
-
-    extern "C" DLL_EXPORT musik::core::sdk::IPlugin* GetPlugin() {
-        return new VisualizerPlugin();
-    }
-
-    extern "C" DLL_EXPORT musik::core::sdk::IPcmVisualizer* GetPcmVisualizer() {
-        return new Visualizer();
-    }
-#endif
+extern "C" DLL_EXPORT musik::core::sdk::IPcmVisualizer* GetPcmVisualizer() {
+    return new Visualizer();
+}
