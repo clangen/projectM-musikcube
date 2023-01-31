@@ -1,14 +1,19 @@
-PROJECT(projectM_musikcube)
+project(projectM_musikcube_plugin)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.11)
 
-set(PROJECTM_MUSIKCUBE_VERSION 1.0.0)
+set(projectM_musikcube_plugin_SOURCES
+	Plugin.cpp
+	UnixVisualizer.cpp
+	Utility.cpp)
 
-set(projectM_musikcube_SOURCES 
-	Utility.cpp
-	projectMPcmVisualizer.cpp)
+add_library(projectM_musikcube_plugin SHARED ${projectM_musikcube_plugin_SOURCES})
 
-add_library(projectM_musikcube SHARED ${projectM_musikcube_SOURCES})
+set(projectM_musikcube_exe_SOURCES
+	SDLWindow.cpp
+	Utility.cpp)
+
+add_executable(projectM_musikcube_exe ${projectM_musikcube_exe_SOURCES})
 
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin" OR CMAKE_SYSTEM_NAME MATCHES "FreeBSD" OR CMAKE_SYSTEM_NAME MATCHES "OpenBSD")
   set(BSD_PATH_PREFIX "/usr/local")
@@ -24,17 +29,17 @@ endif()
 
 include(ExternalProject)
 
-set(LIBPROJECTM_PREFIX "${projectM_musikcube_SOURCE_DIR}/libprojectM-build/")
-set(LIBPROJECTM_OUT "${projectM_musikcube_SOURCE_DIR}/libprojectM-out/")
+set(LIBPROJECTM_PREFIX "${projectM_musikcube_plugin_SOURCE_DIR}/libprojectM-build/")
+set(LIBPROJECTM_OUT "${projectM_musikcube_plugin_SOURCE_DIR}/libprojectM-out/")
 
 ExternalProject_Add(libprojectM
   GIT_REPOSITORY "https://github.com/projectM-visualizer/projectm.git"
   PREFIX "${LIBPROJECTM_PREFIX}"
   BUILD_IN_SOURCE 0
-  CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX:PATH=${LIBPROJECTM_OUT}" "-DBUILD_SHARED_LIBS=OFF"
+  CMAKE_ARGS "-DCMAKE_INSTALL_PREFIX:PATH=${LIBPROJECTM_OUT}" "-DBUILD_SHARED_LIBS=ON"
   INSTALL_COMMAND make install)
 
-add_dependencies(projectM_musikcube libprojectM)
+add_dependencies(projectM_musikcube_plugin libprojectM)
 
 include_directories(
 	"${LIBPROJECTM_OUT}/include"
@@ -48,8 +53,8 @@ link_directories(
 	"/usr/local/lib")
 
 find_package(OpenGL REQUIRED)
-find_library(GLEW_LIB GLEW HINTS /usr/lib /usr/local/lib)
-find_library(SDL2_LIB SDL2 HINTS /usr/lib /usr/local/lib)
+find_library(GLEW_LIB GLEW)
+find_library(SDL2_LIB SDL2)
 
 IF(APPLE)
 	FIND_LIBRARY(CORE_FOUNDATION_LIBRARY CoreFoundation)
@@ -59,20 +64,20 @@ ELSE (APPLE)
 	SET(FRAMEWORK_LIBS "")
 ENDIF (APPLE)
 
-TARGET_LINK_LIBRARIES(projectM_musikcube
+TARGET_LINK_LIBRARIES(projectM_musikcube_exe
 	${OPENGL_LIBRARIES}
 	${GLEW_LIB}
     ${SDL2_LIB}
 	${PROJECTM_LIB}
 	${PROEJCTM_PLAYLIST_LIB}
 	${FRAMEWORK_LIBS}
-	"${LIBPROJECTM_OUT}/lib/libprojectM.a"
-	"${LIBPROJECTM_OUT}/lib/libprojectM_playlist.a"
+	"${LIBPROJECTM_OUT}/lib/libprojectM.so"
+	"${LIBPROJECTM_OUT}/lib/libprojectM_playlist.so"
 	pthread
 	m
 	dl)
 
-# add_custom_command(TARGET projectM_musikcube
+# add_custom_command(TARGET projectM_musikcube_plugin
 # 	POST_BUILD
-# 	COMMAND "${CMAKE_SOURCE_DIR}/post_build.sh"
+# 	COMMAND "${CMAKE_SOURCE_DIR}/script/post-build.sh"
 # 	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")

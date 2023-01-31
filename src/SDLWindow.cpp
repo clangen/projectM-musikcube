@@ -1,25 +1,10 @@
-/**
- * projectM -- Milkdrop-esque visualisation SDK
- * Copyright (C)2003-2004 projectM Team
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * See 'LICENSE.txt' included within this release
- *
- */
+#include "SDLWindow.h"
+
+using namespace musikcube::projectm;
 
 #include <math.h>
+
+#include "Utility.h"
 
 #include <thread>
 #include <mutex>
@@ -46,13 +31,6 @@
 #include <libprojectM/projectM.h>
 #include <libprojectM/playlist.h>
 
-#include <musikcore/sdk/constants.h>
-#include <musikcore/sdk/IPcmVisualizer.h>
-#include <musikcore/sdk/IPlugin.h>
-
-#include "Utility.h"
-#include "EventMapper.h"
-
 #define MAX_FPS 60LL
 #define MILLIS_PER_FRAME (1000LL / MAX_FPS)
 
@@ -61,7 +39,7 @@ using namespace std::chrono;
 static projectm_handle projectM = nullptr;
 static projectm_playlist_handle projectMPlaylist = nullptr;
 static std::atomic<bool> quit(false);
-static std::atomic<bool> thread(false);
+static std::atomic<bool> running(false);
 static std::mutex pmMutex, threadMutex;
 static std::condition_variable threadCondition;
 
@@ -89,14 +67,86 @@ static void prevValidPreset() {
     }
 }
 
-static void windowProc() {
+
+#ifndef WIN32
+    static const int MAX_SAMPLES = 1024;
+    static const char* PCM_PIPE = "/tmp/musikcube_pcm.pipe";
+    static std::condition_variable pipeReadCondition;
+    static std::atomic<bool> pipeOpen(false);
+
+    void pipeReadProc() {
+        bool pipeOpen = true;
+        float samples[MAX_SAMPLES];
+        int count = 0;
+        while (!quit.load()) {
+            mkfifo(PCM_PIPE, 0666);
+            std::cerr << "pipeReadProc: opening pipe...\n";
+            int pipeFd = open(PCM_PIPE, O_RDONLY);
+            std::cerr << "pipeReadProc: open returned\n";
+            if (pipeFd > 0) {
+                std::cerr << "pipeReadProc: pipe stream opened fd=" << pipeFd << "\n";
+                while (pipeFd > 0) {
+                    int count = read(pipeFd, (void *)&samples, MAX_SAMPLES * sizeof(float));
+                    if (count > 0) {
+                        writePcmData((float*) samples, count / sizeof(float), 2);
+                    }
+                    else {
+                        close(pipeFd);
+                        pipeFd = 0;
+                    }
+                }
+            }
+        } /* while (!quit) */
+        {
+            std::unique_lock<std::mutex> lock(threadMutex);
+            pipeOpen = false;
+            pipeReadCondition.notify_all();
+        }
+        std::cerr << "pipeReadProc: done\n";
+    }
+
+    void waitForPipeReadProc() {
+        while (pipeOpen.load()) {
+            std::unique_lock<std::mutex> lock(threadMutex);
+            pipeReadCondition.wait(lock);
+        }
+    }
+#endif
+
+void musikcube::projectm::writePcmData(float* samples, int totalSamples, int channels) {
+    std::unique_lock<std::mutex> lock(pmMutex);
+    if (projectM) {
+        projectm_pcm_add_float(
+            projectM,
+            samples,
+            totalSamples / channels,
+            channels == 1 ? PROJECTM_MONO : PROJECTM_STEREO);
+    }
+}
+
+void musikcube::projectm::stopWindowProc() {
+    quit.store(true);
+    #ifndef WIN32
+        waitForPipeReadProc();
+    #endif
+    while (running.load()) {
+        std::unique_lock<std::mutex> lock(threadMutex);
+        threadCondition.wait(lock);
+    }
+}
+
+void musikcube::projectm::runWindowProc() {
+    quit.store(false);
+    running.store(true);
+
+    #ifndef WIN32
+        std::thread background(pipeReadProc);
+        background.detach();
+    #endif
+
     SDL_Event event;
     SDL_GLContext glContext = nullptr;
     SDL_Window* screen = nullptr;
-
-    //projectMEvent evt;
-    //projectMKeycode key;
-    //projectMModifier mod;
 
     long long start, end;
     bool recreate = true;
@@ -139,25 +189,26 @@ static void windowProc() {
 
             glContext = SDL_GL_CreateContext(screen);
 
+            {
+                std::unique_lock<std::mutex> lock(pmMutex);
+                projectM = projectm_create();
+                projectm_set_window_size(projectM, width, height);
+                projectm_set_fps(projectM, MAX_FPS);
+                projectm_set_mesh_size(projectM, 220, 125);
+                projectm_set_aspect_correction(projectM, true);
+                projectm_set_preset_duration(projectM, 30);
+                projectm_set_soft_cut_duration(projectM, 3);
+                projectm_set_hard_cut_enabled(projectM, false);
+                projectm_set_hard_cut_duration(projectM, 20);
+                projectm_set_hard_cut_sensitivity(projectM, 1.0);
+                projectm_set_beat_sensitivity(projectM, 1.0);
 
-            projectM = projectm_create();
-            projectm_set_window_size(projectM, width, height);
-            projectm_set_fps(projectM, MAX_FPS);
-            projectm_set_mesh_size(projectM, 220, 125);
-            projectm_set_aspect_correction(projectM, true);
-            projectm_set_preset_duration(projectM, 30);
-            projectm_set_soft_cut_duration(projectM, 3);
-            projectm_set_hard_cut_enabled(projectM, false);
-            projectm_set_hard_cut_duration(projectM, 20);
-            projectm_set_hard_cut_sensitivity(projectM, 1.0);
-            projectm_set_beat_sensitivity(projectM, 1.0);
-
-            const std::string presetPath = util::getModuleDirectory();
-            projectMPlaylist = projectm_playlist_create(projectM);
-            projectm_playlist_set_shuffle(projectMPlaylist, true);
-            projectm_playlist_add_path(projectMPlaylist, presetPath.c_str(), true, false);
-            int count = projectm_playlist_size(projectMPlaylist);
-            projectm_playlist_sort(projectMPlaylist, 0, projectm_playlist_size(projectMPlaylist), SORT_PREDICATE_FILENAME_ONLY, SORT_ORDER_ASCENDING);
+                const std::string presetPath = util::getModuleDirectory();
+                projectMPlaylist = projectm_playlist_create(projectM);
+                projectm_playlist_set_shuffle(projectMPlaylist, true);
+                projectm_playlist_add_path(projectMPlaylist, presetPath.c_str(), true, false);
+                projectm_playlist_sort(projectMPlaylist, 0, projectm_playlist_size(projectMPlaylist), SORT_PREDICATE_FILENAME_ONLY, SORT_ORDER_ASCENDING);
+            }
 
             recreate = false;
         }
@@ -177,12 +228,16 @@ static void windowProc() {
             //        fullscreen = !fullscreen;
             //        recreate = true;
             //    }
-
              //}
             if (event.type == SDL_WINDOWEVENT) {
                 if (event.window.event == SDL_WINDOWEVENT_CLOSE) {
                     quit.store(true);
                     continue;
+                }
+                else if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                    SDL_GetWindowSize(screen, &width, &height);
+                    projectm_set_window_size(projectM, width, height);
+                    projectm_reset_textures(projectM);
                 }
             }
             else if (event.type == SDL_KEYDOWN) {
@@ -213,14 +268,10 @@ static void windowProc() {
                     continue;
                 }
             }
-            else if (event.type == SDL_WINDOWEVENT) {
-                SDL_GetWindowSize(screen, &width, &height);
-                projectm_set_window_size(projectM, width, height);
-                projectm_reset_textures(projectM);
-            }
         }
 
         try {
+            std::unique_lock<std::mutex> lock(pmMutex);
             projectm_opengl_render_frame(projectM);
         }
         catch (...) {
@@ -239,6 +290,11 @@ static void windowProc() {
         }
     }
 
+    #ifndef WIN32
+        quit = true;
+        waitForPipeReadProc();
+    #endif
+
     {
         std::unique_lock<std::mutex> lock(pmMutex);
         projectm_destroy(projectM);
@@ -252,7 +308,7 @@ static void windowProc() {
     SDL_Quit();
 
 cleanup:
-    thread.store(false);
+    running.store(false);
 
     {
         std::unique_lock<std::mutex> lock(threadMutex);
@@ -260,79 +316,10 @@ cleanup:
     }
 }
 
-#ifdef WIN32
-    BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
-        return true;
+#ifndef WIN32
+    int main(int argc, char *argv[]) {
+        musikcube::projectm::runWindowProc();
+        return 0;
     }
 #endif
 
-class VisualizerPlugin : public musik::core::sdk::IPlugin {
-    public:
-        void Release() override { delete this; }
-        const char* Name() override { return "projectM IPcmVisualizer"; }
-        const char* Version() override { return "0.5.2"; }
-        const char* Author() override { return "clangen"; }
-        const char* Guid() override { return "1e4b1884-65dd-4010-84a5-7c0f5732f343"; }
-        bool Configurable() override { return false; }
-        void Configure() override { }
-        void Reload() override { }
-        int SdkVersion() override { return musik::core::sdk::SdkVersion; }
-};
-
-class Visualizer : public musik::core::sdk::IPcmVisualizer {
-    public:
-        const char* Name() override {
-            return "projectM";
-        }
-
-        void Release() override {
-            this->Hide();
-            delete this;
-        }
-
-        void Write(musik::core::sdk::IBuffer* buffer) override {
-            if (Visible()) {
-                std::unique_lock<std::mutex> lock(pmMutex);
-                if (projectM) {
-                    const auto channels = buffer->Channels();
-                    projectm_pcm_add_float(
-                        projectM,
-                        buffer->BufferPointer(),
-                        buffer->Samples() / channels,
-                        channels == 1 ? PROJECTM_MONO : PROJECTM_STEREO);
-                }
-            }
-        }
-
-        void Show() override {
-            if (!Visible()) {
-                quit.store(false);
-                thread.store(true);
-                std::thread background(windowProc);
-                background.detach();
-            }
-        }
-
-        void Hide() override {
-            if (Visible()) {
-                quit.store(true);
-
-                while (thread.load()) {
-                    std::unique_lock<std::mutex> lock(threadMutex);
-                    threadCondition.wait(lock);
-                }
-            }
-        }
-
-        bool Visible() override {
-            return thread.load();
-        }
-};
-
-extern "C" DLL_EXPORT musik::core::sdk::IPlugin* GetPlugin() {
-    return new VisualizerPlugin();
-}
-
-extern "C" DLL_EXPORT musik::core::sdk::IPcmVisualizer* GetPcmVisualizer() {
-    return new Visualizer();
-}
