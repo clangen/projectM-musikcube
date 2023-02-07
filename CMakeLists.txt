@@ -1,6 +1,13 @@
 PROJECT(projectM)
 cmake_minimum_required(VERSION 3.0)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wno-unused-result -Wno-deprecated-declarations")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -std=c++17 -DDEBUG -g -frtti -fexceptions -fsanitize=address,undefined")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -std=c++17 -O2 -frtti -fexceptions -Wno-psabi")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2 -Wno-psabi")
+
 add_subdirectory(src)
 
 file(GLOB fonts "fonts/*.ttf")
@@ -14,11 +21,6 @@ install(
 install(
     FILES ${presets}
     DESTINATION share/musikcube/plugins/projectM/presets
-)
-
-install(
-    FILES src/libprojectM/config.inp
-    DESTINATION share/musikcube/plugins/projectM
 )
 
 install(

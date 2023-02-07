@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="projectMPcmVisualizer.cpp" />
+    <ClCompile Include="Utility.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EventMapper.h" />
+    <ClInclude Include="Utility.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName />
+    <SccLocalPath />
+    <ProjectGuid>{68AA481E-3CCE-440F-8CCE-69F1B371C89D}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.Cpp.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)bin32\release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)\bin64\release</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)bin32\debug\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)\bin64\debug</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\win\include;$(SolutionDir)..\musikcube\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Release\projectMvis.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release\</ProgramDataBaseFileName>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\Release\projectMvis.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release\projectMvis.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(SolutionDir)bin32\release\projectM-musikcube.dll</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\win\lib-x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LIBCMT.LIB;version.lib;winmm.lib;Imm32.lib;shlwapi.lib;opengl32.lib;glu32.lib;sdl2.lib;sdl2main.lib;projectM.lib;projectM_playlist.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(TargetPath) $(SolutionDir)..\musikcube\bin32\release\plugins\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x86\glew32.dll $(SolutionDir)..\musikcube\bin32\release\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x86\SDL2.dll $(SolutionDir)..\musikcube\bin32\release\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x86\projectM.dll $(SolutionDir)..\musikcube\bin32\release\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x86\projectM_playlist.dll $(SolutionDir)..\musikcube\bin32\release\ /Y
+if not exist "$(SolutionDir)..\musikcube\bin32\release\plugins\projectM" mkdir "$(SolutionDir)..\musikcube\bin32\release\plugins\projectM"
+if not exist "$(SolutionDir)..\musikcube\bin32\release\plugins\projectM\presets\" mkdir "$(SolutionDir)..\musikcube\bin32\release\plugins\projectM\presets\"
+if not exist "$(SolutionDir)..\musikcube\bin32\release\plugins\projectM\fonts\" mkdir "$(SolutionDir)..\musikcube\bin32\release\plugins\projectM\fonts\"
+if not exist "$(SolutionDir)..\musikcube\bin32\release\plugins\projectM\shaders\" mkdir "$(SolutionDir)..\musikcube\bin32\release\plugins\projectM\shaders\"
+xcopy $(SolutionDir)presets_milkdrop\* $(SolutionDir)..\musikcube\bin32\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_104\* $(SolutionDir)..\musikcube\bin32\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_200\* $(SolutionDir)..\musikcube\bin32\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_projectM\* $(SolutionDir)..\musikcube\bin32\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_yin\* $(SolutionDir)..\musikcube\bin32\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)fonts\*.ttf $(SolutionDir)..\musikcube\bin32\release\plugins\projectM\fonts\ /Y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <StringPooling>true</StringPooling>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <Optimization>MaxSpeed</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\win\include;$(SolutionDir)..\musikcube\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Release\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Release\projectMvis.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Release\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release\</ProgramDataBaseFileName>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\Release\projectMvis.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Release\projectMvis.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(SolutionDir)bin64\release\projectM-musikcube.dll</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\win\lib-x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LIBCMT.LIB;version.lib;winmm.lib;Imm32.lib;shlwapi.lib;opengl32.lib;glu32.lib;sdl2.lib;sdl2main.lib;projectM.lib;projectM_playlist.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(TargetPath) $(SolutionDir)..\musikcube\bin64\release\plugins\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x64\glew32.dll $(SolutionDir)..\musikcube\bin64\release\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x64\SDL2.dll $(SolutionDir)..\musikcube\bin64\release\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x64\projectM.dll $(SolutionDir)..\musikcube\bin64\release\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x64\projectM_playlist.dll $(SolutionDir)..\musikcube\bin64\release\ /Y
+if not exist "$(SolutionDir)..\musikcube\bin64\release\plugins\projectM" mkdir "$(SolutionDir)..\musikcube\bin64\release\plugins\projectM"
+if not exist "$(SolutionDir)..\musikcube\bin64\release\plugins\projectM\presets\" mkdir "$(SolutionDir)..\musikcube\bin64\release\plugins\projectM\presets\"
+if not exist "$(SolutionDir)..\musikcube\bin64\release\plugins\projectM\fonts\" mkdir "$(SolutionDir)..\musikcube\bin64\release\plugins\projectM\fonts\"
+if not exist "$(SolutionDir)..\musikcube\bin64\release\plugins\projectM\shaders\" mkdir "$(SolutionDir)..\musikcube\bin64\release\plugins\projectM\shaders\"
+xcopy $(SolutionDir)presets_milkdrop\* $(SolutionDir)..\musikcube\bin64\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_104\* $(SolutionDir)..\musikcube\bin64\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_200\* $(SolutionDir)..\musikcube\bin64\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_projectM\* $(SolutionDir)..\musikcube\bin64\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_yin\* $(SolutionDir)..\musikcube\bin64\release\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)fonts\*.ttf $(SolutionDir)..\musikcube\bin64\release\plugins\projectM\fonts\ /Y
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <MinimalRebuild>true</MinimalRebuild>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\win\include;$(SolutionDir)..\musikcube\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Debug\projectMvis.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Debug\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\Debug\projectMvis.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <TargetEnvironment>Win32</TargetEnvironment>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug\projectMvis.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(SolutionDir)bin32\debug\projectM-musikcube.dll</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\win\lib-x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LIBCMTD.LIB;version.lib;winmm.lib;Imm32.lib;shlwapi.lib;opengl32.lib;glu32.lib;sdl2.lib;sdl2main.lib;projectMd.lib;projectM_playlistd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(TargetPath) $(SolutionDir)..\musikcube\bin32\debug\plugins\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x86\glew32.dll $(SolutionDir)..\musikcube\bin32\debug\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x86\SDL2.dll $(SolutionDir)..\musikcube\bin32\debug\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x86\projectMd.dll $(SolutionDir)..\musikcube\bin32\debug\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x86\projectM_playlistd.dll $(SolutionDir)..\musikcube\bin32\debug\ /Y
+if not exist "$(SolutionDir)..\musikcube\bin32\debug\plugins\projectM" mkdir "$(SolutionDir)..\musikcube\bin32\debug\plugins\projectM"
+if not exist "$(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\presets\" mkdir "$(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\presets\"
+if not exist "$(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\fonts\" mkdir "$(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\fonts\"
+if not exist "$(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\shaders\" mkdir "$(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\shaders\"
+xcopy $(SolutionDir)presets_milkdrop\* $(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_104\* $(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_200\* $(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_projectM\* $(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_yin\* $(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)fonts\*.ttf $(SolutionDir)..\musikcube\bin32\debug\plugins\projectM\fonts\ /Y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <Optimization>Disabled</Optimization>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\win\include;$(SolutionDir)..\musikcube\src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
+      <PrecompiledHeaderOutputFile>.\Debug\projectMvis.pch</PrecompiledHeaderOutputFile>
+      <ObjectFileName>.\Debug\</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug\</ProgramDataBaseFileName>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+    </ClCompile>
+    <Midl>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TypeLibraryName>.\Debug\projectMvis.tlb</TypeLibraryName>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\Debug\projectMvis.bsc</OutputFile>
+    </Bscmake>
+    <Link>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(SolutionDir)bin64\debug\projectM-musikcube.dll</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdparty\win\lib-x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>LIBCMTD.LIB;version.lib;winmm.lib;Imm32.lib;shlwapi.lib;opengl32.lib;glu32.lib;sdl2.lib;sdl2main.lib;projectMd.lib;projectM_playlistd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy $(TargetPath) $(SolutionDir)..\musikcube\bin64\debug\plugins\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x64\glew32.dll $(SolutionDir)..\musikcube\bin64\debug\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x64\SDL2.dll $(SolutionDir)..\musikcube\bin64\debug\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x64\projectMd.dll $(SolutionDir)..\musikcube\bin64\debug\ /Y
+xcopy $(SolutionDir)3rdparty\win\lib-x64\projectM_playlistd.dll $(SolutionDir)..\musikcube\bin64\debug\ /Y
+if not exist "$(SolutionDir)..\musikcube\bin64\debug\plugins\projectM" mkdir "$(SolutionDir)..\musikcube\bin64\debug\plugins\projectM"
+if not exist "$(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\presets\" mkdir "$(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\presets\"
+if not exist "$(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\fonts\" mkdir "$(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\fonts\"
+if not exist "$(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\shaders\" mkdir "$(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\shaders\"
+xcopy $(SolutionDir)presets_milkdrop\* $(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_104\* $(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_milkdrop_200\* $(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_projectM\* $(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)presets_yin\* $(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\presets\ /Y
+xcopy $(SolutionDir)fonts\*.ttf $(SolutionDir)..\musikcube\bin64\debug\plugins\projectM\fonts\ /Y</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
